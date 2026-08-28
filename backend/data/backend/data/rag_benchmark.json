@@ -1,0 +1,63 @@
+[
+  {
+    "query": "Lisinopril pregnancy guidelines",
+    "expected_sources": [
+      "who_guidelines.txt",
+      "who_patient_safety_factsheet.txt"
+    ]
+  },
+  {
+    "query": "Spironolactone hyperkalemia risk",
+    "expected_sources": [
+      "who_guidelines.txt"
+    ]
+  },
+  {
+    "query": "NSAID kidney impairment warnings",
+    "expected_sources": [
+      "who_guidelines.txt"
+    ]
+  },
+  {
+    "query": "Metformin lactic acidosis contraindications",
+    "expected_sources": [
+      "who_guidelines.txt"
+    ]
+  },
+  {
+    "query": "Amoxicillin penicillin allergy cross-reactivity",
+    "expected_sources": [
+      "who_guidelines.txt"
+    ]
+  },
+  {
+    "query": "Drug-drug interaction metoprolol fluoxetine",
+    "expected_sources": [
+      "who_guidelines.txt"
+    ]
+  },
+  {
+    "query": "Beers criteria zolpidem elderly",
+    "expected_sources": [
+      "who_guidelines.txt"
+    ]
+  },
+  {
+    "query": "Amiodarone azithromycin QT prolongation",
+    "expected_sources": [
+      "who_guidelines.txt"
+    ]
+  },
+  {
+    "query": "Warfarin pregnancy contraindications",
+    "expected_sources": [
+      "who_guidelines.txt"
+    ]
+  },
+  {
+    "query": "Acetaminophen hepatotoxicity liver cirrhosis",
+    "expected_sources": [
+      "who_guidelines.txt"
+    ]
+  }
+]

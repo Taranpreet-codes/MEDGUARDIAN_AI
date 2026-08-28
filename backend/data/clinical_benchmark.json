@@ -1,0 +1,1526 @@
+[
+  {
+    "patient_id": "P001",
+    "age": 67,
+    "gender": "Male",
+    "pregnant": false,
+    "weight": 82,
+    "height": 175,
+    "allergies": [
+      "Penicillin"
+    ],
+    "medical_conditions": [
+      "Hypertension",
+      "Diabetes",
+      "Chronic Kidney Disease"
+    ],
+    "renal_function": "Severe",
+    "hepatic_function": "Normal",
+    "current_medications": [
+      "Lisinopril",
+      "Metformin",
+      "Spironolactone"
+    ],
+    "new_medications": [
+      "Ibuprofen"
+    ],
+    "lab_values": {
+      "Creatinine": 3.4,
+      "Potassium": 5.9,
+      "eGFR": 25.0
+    },
+    "expected_risk": "SEVERE",
+    "expected_alerts": [
+      "Drug Interaction",
+      "Renal Contraindication"
+    ],
+    "clinical_reference": [
+      "FDA Label",
+      "RxNav",
+      "KDIGO Guideline"
+    ]
+  },
+  {
+    "patient_id": "P002",
+    "age": 29,
+    "gender": "Female",
+    "pregnant": true,
+    "weight": 65,
+    "height": 160,
+    "allergies": [],
+    "medical_conditions": [
+      "Hypertension"
+    ],
+    "renal_function": "Normal",
+    "hepatic_function": "Normal",
+    "current_medications": [],
+    "new_medications": [
+      "Lisinopril"
+    ],
+    "lab_values": {
+      "Creatinine": 0.7,
+      "eGFR": 110.0
+    },
+    "expected_risk": "SEVERE",
+    "expected_alerts": [
+      "Pregnancy Contraindication"
+    ],
+    "clinical_reference": [
+      "FDA Label"
+    ]
+  },
+  {
+    "patient_id": "P003",
+    "age": 45,
+    "gender": "Female",
+    "pregnant": false,
+    "weight": 70,
+    "height": 165,
+    "allergies": [
+      "Penicillin"
+    ],
+    "medical_conditions": [
+      "Pharyngitis"
+    ],
+    "renal_function": "Normal",
+    "hepatic_function": "Normal",
+    "current_medications": [],
+    "new_medications": [
+      "Amoxicillin"
+    ],
+    "lab_values": {
+      "Creatinine": 0.8,
+      "eGFR": 95.0
+    },
+    "expected_risk": "SEVERE",
+    "expected_alerts": [
+      "Drug Allergy Conflict"
+    ],
+    "clinical_reference": [
+      "FDA Label",
+      "Clinical Practice Guidelines"
+    ]
+  },
+  {
+    "patient_id": "P004",
+    "age": 58,
+    "gender": "Male",
+    "pregnant": false,
+    "weight": 88,
+    "height": 180,
+    "allergies": [],
+    "medical_conditions": [
+      "Anxiety",
+      "Hypertension",
+      "Heart Disease"
+    ],
+    "renal_function": "Normal",
+    "hepatic_function": "Normal",
+    "current_medications": [
+      "Metoprolol"
+    ],
+    "new_medications": [
+      "Fluoxetine"
+    ],
+    "lab_values": {
+      "Creatinine": 0.9,
+      "eGFR": 85.0
+    },
+    "expected_risk": "SEVERE",
+    "expected_alerts": [
+      "Drug Interaction"
+    ],
+    "clinical_reference": [
+      "RxNav",
+      "FDA Label"
+    ]
+  },
+  {
+    "patient_id": "P005",
+    "age": 72,
+    "gender": "Female",
+    "pregnant": false,
+    "weight": 60,
+    "height": 158,
+    "allergies": [],
+    "medical_conditions": [
+      "Heart Failure",
+      "Chronic Kidney Disease"
+    ],
+    "renal_function": "Severe",
+    "hepatic_function": "Normal",
+    "current_medications": [
+      "Spironolactone"
+    ],
+    "new_medications": [],
+    "lab_values": {
+      "Creatinine": 2.8,
+      "Potassium": 5.7,
+      "eGFR": 20.0
+    },
+    "expected_risk": "SEVERE",
+    "expected_alerts": [
+      "Renal Contraindication"
+    ],
+    "clinical_reference": [
+      "KDIGO Guideline",
+      "FDA Label"
+    ]
+  },
+  {
+    "patient_id": "P006",
+    "age": 50,
+    "gender": "Male",
+    "pregnant": false,
+    "weight": 95,
+    "height": 178,
+    "allergies": [],
+    "medical_conditions": [
+      "Hyperlipidemia",
+      "Active Hepatic Disease"
+    ],
+    "renal_function": "Normal",
+    "hepatic_function": "Severe",
+    "current_medications": [],
+    "new_medications": [
+      "Atorvastatin"
+    ],
+    "lab_values": {
+      "ALT": 150,
+      "AST": 130
+    },
+    "expected_risk": "MODERATE",
+    "expected_alerts": [
+      "Hepatic Caution"
+    ],
+    "clinical_reference": [
+      "FDA Label"
+    ]
+  },
+  {
+    "patient_id": "P007",
+    "age": 63,
+    "gender": "Female",
+    "pregnant": false,
+    "weight": 77,
+    "height": 162,
+    "allergies": [],
+    "medical_conditions": [
+      "Hypertension"
+    ],
+    "renal_function": "Normal",
+    "hepatic_function": "Normal",
+    "current_medications": [
+      "Lisinopril"
+    ],
+    "new_medications": [
+      "Enalapril"
+    ],
+    "lab_values": {
+      "Creatinine": 0.9,
+      "eGFR": 88.0
+    },
+    "expected_risk": "SEVERE",
+    "expected_alerts": [
+      "Duplicate Therapy"
+    ],
+    "clinical_reference": [
+      "Clinical Guidelines"
+    ]
+  },
+  {
+    "patient_id": "P008",
+    "age": 55,
+    "gender": "Male",
+    "pregnant": false,
+    "weight": 90,
+    "height": 176,
+    "allergies": [],
+    "medical_conditions": [
+      "Diabetes",
+      "Chronic Kidney Disease"
+    ],
+    "renal_function": "Severe",
+    "hepatic_function": "Normal",
+    "current_medications": [
+      "Metformin"
+    ],
+    "new_medications": [],
+    "lab_values": {
+      "Creatinine": 2.5,
+      "eGFR": 25.0
+    },
+    "expected_risk": "SEVERE",
+    "expected_alerts": [
+      "Renal Contraindication"
+    ],
+    "clinical_reference": [
+      "FDA Label",
+      "ADA Guideline"
+    ]
+  },
+  {
+    "patient_id": "P009",
+    "age": 82,
+    "gender": "Female",
+    "pregnant": false,
+    "weight": 52,
+    "height": 150,
+    "allergies": [],
+    "medical_conditions": [
+      "Depression",
+      "Insomnia"
+    ],
+    "renal_function": "Normal",
+    "hepatic_function": "Normal",
+    "current_medications": [],
+    "new_medications": [
+      "Amitriptyline"
+    ],
+    "lab_values": {
+      "Creatinine": 0.8,
+      "eGFR": 65.0
+    },
+    "expected_risk": "MODERATE",
+    "expected_alerts": [
+      "Geriatric Caution"
+    ],
+    "clinical_reference": [
+      "Beers Criteria"
+    ]
+  },
+  {
+    "patient_id": "P010",
+    "age": 69,
+    "gender": "Male",
+    "pregnant": false,
+    "weight": 80,
+    "height": 172,
+    "allergies": [],
+    "medical_conditions": [
+      "Atrial Fibrillation",
+      "Pneumonia"
+    ],
+    "renal_function": "Normal",
+    "hepatic_function": "Normal",
+    "current_medications": [
+      "Amiodarone"
+    ],
+    "new_medications": [
+      "Azithromycin"
+    ],
+    "lab_values": {
+      "Creatinine": 1.0,
+      "eGFR": 75.0
+    },
+    "expected_risk": "SEVERE",
+    "expected_alerts": [
+      "Drug Interaction",
+      "QT Prolongation"
+    ],
+    "clinical_reference": [
+      "FDA Safety Bulletin"
+    ]
+  },
+  {
+    "patient_id": "P011",
+    "age": 61,
+    "gender": "Male",
+    "pregnant": false,
+    "weight": 85,
+    "height": 175,
+    "allergies": [],
+    "medical_conditions": [
+      "Deep Vein Thrombosis",
+      "Osteoarthritis"
+    ],
+    "renal_function": "Normal",
+    "hepatic_function": "Normal",
+    "current_medications": [
+      "Warfarin"
+    ],
+    "new_medications": [
+      "Aspirin"
+    ],
+    "lab_values": {
+      "Creatinine": 1.1,
+      "eGFR": 78.0
+    },
+    "expected_risk": "MODERATE",
+    "expected_alerts": [
+      "Drug Interaction"
+    ],
+    "clinical_reference": [
+      "FDA Label",
+      "CHEST Guideline"
+    ]
+  },
+  {
+    "patient_id": "P012",
+    "age": 52,
+    "gender": "Male",
+    "pregnant": false,
+    "weight": 92,
+    "height": 182,
+    "allergies": [],
+    "medical_conditions": [
+      "Angina",
+      "Erectile Dysfunction"
+    ],
+    "renal_function": "Normal",
+    "hepatic_function": "Normal",
+    "current_medications": [
+      "Nitroglycerin"
+    ],
+    "new_medications": [
+      "Sildenafil"
+    ],
+    "lab_values": {
+      "Creatinine": 1.0,
+      "eGFR": 82.0
+    },
+    "expected_risk": "SEVERE",
+    "expected_alerts": [
+      "Drug Interaction"
+    ],
+    "clinical_reference": [
+      "FDA Label",
+      "ACC/AHA Guideline"
+    ]
+  },
+  {
+    "patient_id": "P013",
+    "age": 66,
+    "gender": "Female",
+    "pregnant": false,
+    "weight": 71,
+    "height": 160,
+    "allergies": [],
+    "medical_conditions": [
+      "Hypertension",
+      "Hyperlipidemia"
+    ],
+    "renal_function": "Normal",
+    "hepatic_function": "Normal",
+    "current_medications": [
+      "Amlodipine"
+    ],
+    "new_medications": [
+      "Simvastatin"
+    ],
+    "lab_values": {
+      "Creatinine": 0.9,
+      "eGFR": 70.0
+    },
+    "expected_risk": "MODERATE",
+    "expected_alerts": [
+      "Drug Interaction"
+    ],
+    "clinical_reference": [
+      "FDA Label"
+    ]
+  },
+  {
+    "patient_id": "P014",
+    "age": 34,
+    "gender": "Female",
+    "pregnant": false,
+    "weight": 68,
+    "height": 168,
+    "allergies": [
+      "Sulfa"
+    ],
+    "medical_conditions": [
+      "Urinary Tract Infection"
+    ],
+    "renal_function": "Normal",
+    "hepatic_function": "Normal",
+    "current_medications": [],
+    "new_medications": [
+      "Sulfamethoxazole"
+    ],
+    "lab_values": {
+      "Creatinine": 0.7,
+      "eGFR": 105.0
+    },
+    "expected_risk": "SEVERE",
+    "expected_alerts": [
+      "Drug Allergy Conflict"
+    ],
+    "clinical_reference": [
+      "FDA Label"
+    ]
+  },
+  {
+    "patient_id": "P015",
+    "age": 6,
+    "gender": "Male",
+    "pregnant": false,
+    "weight": 22,
+    "height": 115,
+    "allergies": [],
+    "medical_conditions": [
+      "Bacterial Infection"
+    ],
+    "renal_function": "Normal",
+    "hepatic_function": "Normal",
+    "current_medications": [],
+    "new_medications": [
+      "Doxycycline"
+    ],
+    "lab_values": {
+      "Creatinine": 0.4,
+      "eGFR": 120.0
+    },
+    "expected_risk": "MODERATE",
+    "expected_alerts": [
+      "Pediatric Caution"
+    ],
+    "clinical_reference": [
+      "FDA Label"
+    ]
+  },
+  {
+    "patient_id": "P016",
+    "age": 75,
+    "gender": "Female",
+    "pregnant": false,
+    "weight": 58,
+    "height": 154,
+    "allergies": [],
+    "medical_conditions": [
+      "Atrial Fibrillation",
+      "Hypertension"
+    ],
+    "renal_function": "Normal",
+    "hepatic_function": "Normal",
+    "current_medications": [
+      "Digoxin"
+    ],
+    "new_medications": [
+      "Verapamil"
+    ],
+    "lab_values": {
+      "Creatinine": 1.1,
+      "eGFR": 62.0
+    },
+    "expected_risk": "MODERATE",
+    "expected_alerts": [
+      "Drug Interaction"
+    ],
+    "clinical_reference": [
+      "FDA Label"
+    ]
+  },
+  {
+    "patient_id": "P017",
+    "age": 59,
+    "gender": "Male",
+    "pregnant": false,
+    "weight": 83,
+    "height": 177,
+    "allergies": [],
+    "medical_conditions": [
+      "Heart Failure",
+      "Hypokalemia"
+    ],
+    "renal_function": "Normal",
+    "hepatic_function": "Normal",
+    "current_medications": [
+      "Spironolactone"
+    ],
+    "new_medications": [
+      "Potassium Chloride"
+    ],
+    "lab_values": {
+      "Creatinine": 1.2,
+      "Potassium": 3.4,
+      "eGFR": 75.0
+    },
+    "expected_risk": "SEVERE",
+    "expected_alerts": [
+      "Drug Interaction"
+    ],
+    "clinical_reference": [
+      "FDA Label"
+    ]
+  },
+  {
+    "patient_id": "P018",
+    "age": 64,
+    "gender": "Male",
+    "pregnant": false,
+    "weight": 86,
+    "height": 178,
+    "allergies": [],
+    "medical_conditions": [
+      "Coronary Artery Disease",
+      "Gastroesophageal Reflux Disease"
+    ],
+    "renal_function": "Normal",
+    "hepatic_function": "Normal",
+    "current_medications": [
+      "Clopidogrel"
+    ],
+    "new_medications": [
+      "Omeprazole"
+    ],
+    "lab_values": {
+      "Creatinine": 1.0,
+      "eGFR": 80.0
+    },
+    "expected_risk": "MODERATE",
+    "expected_alerts": [
+      "Drug Interaction"
+    ],
+    "clinical_reference": [
+      "FDA Label",
+      "ACC/AHA Guideline"
+    ]
+  },
+  {
+    "patient_id": "P019",
+    "age": 42,
+    "gender": "Female",
+    "pregnant": false,
+    "weight": 66,
+    "height": 164,
+    "allergies": [],
+    "medical_conditions": [
+      "Asthma",
+      "Hypertension"
+    ],
+    "renal_function": "Normal",
+    "hepatic_function": "Normal",
+    "current_medications": [
+      "Albuterol"
+    ],
+    "new_medications": [
+      "Propranolol"
+    ],
+    "lab_values": {
+      "Creatinine": 0.8,
+      "eGFR": 98.0
+    },
+    "expected_risk": "MODERATE",
+    "expected_alerts": [
+      "Drug Interaction"
+    ],
+    "clinical_reference": [
+      "FDA Label",
+      "GINA Guideline"
+    ]
+  },
+  {
+    "patient_id": "P020",
+    "age": 30,
+    "gender": "Male",
+    "pregnant": false,
+    "weight": 75,
+    "height": 180,
+    "allergies": [],
+    "medical_conditions": [
+      "General Health"
+    ],
+    "renal_function": "Normal",
+    "hepatic_function": "Normal",
+    "current_medications": [],
+    "new_medications": [
+      "Multivitamin"
+    ],
+    "lab_values": {
+      "Creatinine": 0.9,
+      "eGFR": 100.0
+    },
+    "expected_risk": "SAFE",
+    "expected_alerts": [],
+    "clinical_reference": []
+  },
+  {
+    "patient_id": "P021",
+    "age": 28,
+    "gender": "Female",
+    "pregnant": false,
+    "weight": 62,
+    "height": 163,
+    "allergies": [],
+    "medical_conditions": [
+      "Diarrhea"
+    ],
+    "renal_function": "Normal",
+    "hepatic_function": "Normal",
+    "current_medications": [],
+    "new_medications": [
+      "Loperamide"
+    ],
+    "lab_values": {
+      "Creatinine": 0.7,
+      "eGFR": 112.0
+    },
+    "expected_risk": "SAFE",
+    "expected_alerts": [],
+    "clinical_reference": []
+  },
+  {
+    "patient_id": "P022",
+    "age": 70,
+    "gender": "Male",
+    "pregnant": false,
+    "weight": 79,
+    "height": 173,
+    "allergies": [],
+    "medical_conditions": [
+      "Osteoarthritis",
+      "Chronic Kidney Disease"
+    ],
+    "renal_function": "Severe",
+    "hepatic_function": "Normal",
+    "current_medications": [],
+    "new_medications": [
+      "Ibuprofen"
+    ],
+    "lab_values": {
+      "Creatinine": 3.1,
+      "eGFR": 15.0
+    },
+    "expected_risk": "SEVERE",
+    "expected_alerts": [
+      "Renal Contraindication"
+    ],
+    "clinical_reference": [
+      "KDIGO Guideline",
+      "FDA Label"
+    ]
+  },
+  {
+    "patient_id": "P023",
+    "age": 54,
+    "gender": "Female",
+    "pregnant": false,
+    "weight": 74,
+    "height": 166,
+    "allergies": [],
+    "medical_conditions": [
+      "Diabetes",
+      "Coronary Artery Disease"
+    ],
+    "renal_function": "Normal",
+    "hepatic_function": "Normal",
+    "current_medications": [
+      "Metformin"
+    ],
+    "new_medications": [
+      "Iodinated Contrast"
+    ],
+    "lab_values": {
+      "Creatinine": 1.1,
+      "eGFR": 75.0
+    },
+    "expected_risk": "MODERATE",
+    "expected_alerts": [
+      "Drug Interaction"
+    ],
+    "clinical_reference": [
+      "FDA Label",
+      "ACR Guideline"
+    ]
+  },
+  {
+    "patient_id": "P024",
+    "age": 25,
+    "gender": "Female",
+    "pregnant": true,
+    "weight": 69,
+    "height": 161,
+    "allergies": [],
+    "medical_conditions": [
+      "Epilepsy"
+    ],
+    "renal_function": "Normal",
+    "hepatic_function": "Normal",
+    "current_medications": [],
+    "new_medications": [
+      "Valproate"
+    ],
+    "lab_values": {
+      "Creatinine": 0.6,
+      "eGFR": 115.0
+    },
+    "expected_risk": "SEVERE",
+    "expected_alerts": [
+      "Pregnancy Contraindication"
+    ],
+    "clinical_reference": [
+      "FDA Label",
+      "AAN Guideline"
+    ]
+  },
+  {
+    "patient_id": "P025",
+    "age": 31,
+    "gender": "Female",
+    "pregnant": true,
+    "weight": 72,
+    "height": 165,
+    "allergies": [],
+    "medical_conditions": [
+      "Deep Vein Thrombosis"
+    ],
+    "renal_function": "Normal",
+    "hepatic_function": "Normal",
+    "current_medications": [],
+    "new_medications": [
+      "Warfarin"
+    ],
+    "lab_values": {
+      "Creatinine": 0.8,
+      "eGFR": 98.0
+    },
+    "expected_risk": "SEVERE",
+    "expected_alerts": [
+      "Pregnancy Contraindication"
+    ],
+    "clinical_reference": [
+      "FDA Label",
+      "ACOG Guideline"
+    ]
+  },
+  {
+    "patient_id": "P026",
+    "age": 52,
+    "gender": "Male",
+    "pregnant": false,
+    "weight": 88,
+    "height": 181,
+    "allergies": [],
+    "medical_conditions": [
+      "Hyperlipidemia",
+      "Bacterial Infection"
+    ],
+    "renal_function": "Normal",
+    "hepatic_function": "Normal",
+    "current_medications": [
+      "Simvastatin"
+    ],
+    "new_medications": [
+      "Clarithromycin"
+    ],
+    "lab_values": {
+      "Creatinine": 1.0,
+      "eGFR": 84.0
+    },
+    "expected_risk": "SEVERE",
+    "expected_alerts": [
+      "Drug Interaction"
+    ],
+    "clinical_reference": [
+      "FDA Label"
+    ]
+  },
+  {
+    "patient_id": "P027",
+    "age": 60,
+    "gender": "Female",
+    "pregnant": false,
+    "weight": 67,
+    "height": 159,
+    "allergies": [],
+    "medical_conditions": [
+      "Heart Failure",
+      "Osteoarthritis"
+    ],
+    "renal_function": "Normal",
+    "hepatic_function": "Normal",
+    "current_medications": [
+      "Spironolactone"
+    ],
+    "new_medications": [
+      "Ibuprofen"
+    ],
+    "lab_values": {
+      "Creatinine": 1.1,
+      "eGFR": 68.0
+    },
+    "expected_risk": "MODERATE",
+    "expected_alerts": [
+      "Drug Interaction"
+    ],
+    "clinical_reference": [
+      "FDA Label"
+    ]
+  },
+  {
+    "patient_id": "P028",
+    "age": 41,
+    "gender": "Male",
+    "pregnant": false,
+    "weight": 76,
+    "height": 174,
+    "allergies": [
+      "Aspirin"
+    ],
+    "medical_conditions": [
+      "Gout"
+    ],
+    "renal_function": "Normal",
+    "hepatic_function": "Normal",
+    "current_medications": [],
+    "new_medications": [
+      "Ibuprofen"
+    ],
+    "lab_values": {
+      "Creatinine": 0.9,
+      "eGFR": 92.0
+    },
+    "expected_risk": "SEVERE",
+    "expected_alerts": [
+      "Drug Allergy Conflict"
+    ],
+    "clinical_reference": [
+      "FDA Label"
+    ]
+  },
+  {
+    "patient_id": "P029",
+    "age": 78,
+    "gender": "Female",
+    "pregnant": false,
+    "weight": 55,
+    "height": 152,
+    "allergies": [],
+    "medical_conditions": [
+      "Insomnia"
+    ],
+    "renal_function": "Normal",
+    "hepatic_function": "Normal",
+    "current_medications": [],
+    "new_medications": [
+      "Zolpidem"
+    ],
+    "lab_values": {
+      "Creatinine": 0.7,
+      "eGFR": 72.0
+    },
+    "expected_risk": "MODERATE",
+    "expected_alerts": [
+      "Geriatric Caution"
+    ],
+    "clinical_reference": [
+      "Beers Criteria"
+    ]
+  },
+  {
+    "patient_id": "P030",
+    "age": 7,
+    "gender": "Female",
+    "pregnant": false,
+    "weight": 24,
+    "height": 118,
+    "allergies": [],
+    "medical_conditions": [
+      "Acne"
+    ],
+    "renal_function": "Normal",
+    "hepatic_function": "Normal",
+    "current_medications": [],
+    "new_medications": [
+      "Tetracycline"
+    ],
+    "lab_values": {
+      "Creatinine": 0.4,
+      "eGFR": 115.0
+    },
+    "expected_risk": "MODERATE",
+    "expected_alerts": [
+      "Pediatric Caution"
+    ],
+    "clinical_reference": [
+      "FDA Label"
+    ]
+  },
+  {
+    "patient_id": "P031",
+    "age": 49,
+    "gender": "Male",
+    "pregnant": false,
+    "weight": 84,
+    "height": 176,
+    "allergies": [],
+    "medical_conditions": [
+      "Bacterial Sinusitis",
+      "Rheumatoid Arthritis"
+    ],
+    "renal_function": "Normal",
+    "hepatic_function": "Normal",
+    "current_medications": [
+      "Ibuprofen"
+    ],
+    "new_medications": [
+      "Levofloxacin"
+    ],
+    "lab_values": {
+      "Creatinine": 1.0,
+      "eGFR": 86.0
+    },
+    "expected_risk": "MODERATE",
+    "expected_alerts": [
+      "Drug Interaction"
+    ],
+    "clinical_reference": [
+      "FDA Label"
+    ]
+  },
+  {
+    "patient_id": "P032",
+    "age": 8,
+    "gender": "Male",
+    "pregnant": false,
+    "weight": 27,
+    "height": 125,
+    "allergies": [],
+    "medical_conditions": [
+      "Strep Throat"
+    ],
+    "renal_function": "Normal",
+    "hepatic_function": "Normal",
+    "current_medications": [],
+    "new_medications": [
+      "Amoxicillin"
+    ],
+    "lab_values": {
+      "Creatinine": 0.5,
+      "eGFR": 110.0
+    },
+    "expected_risk": "SAFE",
+    "expected_alerts": [],
+    "clinical_reference": []
+  },
+  {
+    "patient_id": "P033",
+    "age": 35,
+    "gender": "Female",
+    "pregnant": false,
+    "weight": 64,
+    "height": 162,
+    "allergies": [],
+    "medical_conditions": [
+      "Allergic Rhinitis"
+    ],
+    "renal_function": "Normal",
+    "hepatic_function": "Normal",
+    "current_medications": [],
+    "new_medications": [
+      "Cetirizine"
+    ],
+    "lab_values": {
+      "Creatinine": 0.7,
+      "eGFR": 102.0
+    },
+    "expected_risk": "SAFE",
+    "expected_alerts": [],
+    "clinical_reference": []
+  },
+  {
+    "patient_id": "P034",
+    "age": 47,
+    "gender": "Female",
+    "pregnant": false,
+    "weight": 71,
+    "height": 167,
+    "allergies": [],
+    "medical_conditions": [
+      "Bipolar Disorder",
+      "Hypertension"
+    ],
+    "renal_function": "Normal",
+    "hepatic_function": "Normal",
+    "current_medications": [
+      "Lithium"
+    ],
+    "new_medications": [
+      "Hydrochlorothiazide"
+    ],
+    "lab_values": {
+      "Creatinine": 0.9,
+      "eGFR": 90.0
+    },
+    "expected_risk": "SEVERE",
+    "expected_alerts": [
+      "Drug Interaction"
+    ],
+    "clinical_reference": [
+      "FDA Label"
+    ]
+  },
+  {
+    "patient_id": "P035",
+    "age": 39,
+    "gender": "Male",
+    "pregnant": false,
+    "weight": 78,
+    "height": 173,
+    "allergies": [],
+    "medical_conditions": [
+      "G6PD Deficiency",
+      "Hyperuricemia"
+    ],
+    "renal_function": "Normal",
+    "hepatic_function": "Normal",
+    "current_medications": [],
+    "new_medications": [
+      "Rasburicase"
+    ],
+    "lab_values": {
+      "Creatinine": 1.1,
+      "eGFR": 80.0
+    },
+    "expected_risk": "SEVERE",
+    "expected_alerts": [
+      "Drug Interaction"
+    ],
+    "clinical_reference": [
+      "FDA Label"
+    ]
+  },
+  {
+    "patient_id": "P036",
+    "age": 43,
+    "gender": "Female",
+    "pregnant": false,
+    "weight": 69,
+    "height": 164,
+    "allergies": [
+      "Sulfa"
+    ],
+    "medical_conditions": [
+      "Osteoarthritis"
+    ],
+    "renal_function": "Normal",
+    "hepatic_function": "Normal",
+    "current_medications": [],
+    "new_medications": [
+      "Celecoxib"
+    ],
+    "lab_values": {
+      "Creatinine": 0.8,
+      "eGFR": 95.0
+    },
+    "expected_risk": "MODERATE",
+    "expected_alerts": [
+      "Drug Allergy Conflict"
+    ],
+    "clinical_reference": [
+      "FDA Label"
+    ]
+  },
+  {
+    "patient_id": "P037",
+    "age": 51,
+    "gender": "Male",
+    "pregnant": false,
+    "weight": 81,
+    "height": 175,
+    "allergies": [
+      "Peanut"
+    ],
+    "medical_conditions": [
+      "COPD"
+    ],
+    "renal_function": "Normal",
+    "hepatic_function": "Normal",
+    "current_medications": [],
+    "new_medications": [
+      "Ipratropium"
+    ],
+    "lab_values": {
+      "Creatinine": 1.0,
+      "eGFR": 82.0
+    },
+    "expected_risk": "SAFE",
+    "expected_alerts": [],
+    "clinical_reference": []
+  },
+  {
+    "patient_id": "P038",
+    "age": 57,
+    "gender": "Female",
+    "pregnant": false,
+    "weight": 76,
+    "height": 165,
+    "allergies": [],
+    "medical_conditions": [
+      "Diabetes"
+    ],
+    "renal_function": "Normal",
+    "hepatic_function": "Normal",
+    "current_medications": [
+      "Metformin",
+      "Glipizide"
+    ],
+    "new_medications": [
+      "Insulin"
+    ],
+    "lab_values": {
+      "Creatinine": 0.9,
+      "eGFR": 88.0
+    },
+    "expected_risk": "MODERATE",
+    "expected_alerts": [
+      "Drug Interaction"
+    ],
+    "clinical_reference": [
+      "ADA Guideline"
+    ]
+  },
+  {
+    "patient_id": "P039",
+    "age": 62,
+    "gender": "Male",
+    "pregnant": false,
+    "weight": 89,
+    "height": 179,
+    "allergies": [],
+    "medical_conditions": [
+      "Hypertension"
+    ],
+    "renal_function": "Normal",
+    "hepatic_function": "Normal",
+    "current_medications": [
+      "Lisinopril"
+    ],
+    "new_medications": [
+      "Losartan"
+    ],
+    "lab_values": {
+      "Creatinine": 1.1,
+      "eGFR": 76.0
+    },
+    "expected_risk": "SEVERE",
+    "expected_alerts": [
+      "Duplicate Therapy"
+    ],
+    "clinical_reference": [
+      "ACC/AHA Guideline"
+    ]
+  },
+  {
+    "patient_id": "P040",
+    "age": 55,
+    "gender": "Male",
+    "pregnant": false,
+    "weight": 84,
+    "height": 172,
+    "allergies": [],
+    "medical_conditions": [
+      "Coronary Artery Disease",
+      "Erectile Dysfunction"
+    ],
+    "renal_function": "Normal",
+    "hepatic_function": "Normal",
+    "current_medications": [
+      "Isosorbide Mononitrate"
+    ],
+    "new_medications": [
+      "Sildenafil"
+    ],
+    "lab_values": {
+      "Creatinine": 1.0,
+      "eGFR": 80.0
+    },
+    "expected_risk": "SEVERE",
+    "expected_alerts": [
+      "Drug Interaction"
+    ],
+    "clinical_reference": [
+      "FDA Label"
+    ]
+  },
+  {
+    "patient_id": "P041",
+    "age": 53,
+    "gender": "Male",
+    "pregnant": false,
+    "weight": 87,
+    "height": 177,
+    "allergies": [],
+    "medical_conditions": [
+      "Pulmonary Embolism",
+      "Fungal Infection"
+    ],
+    "renal_function": "Normal",
+    "hepatic_function": "Normal",
+    "current_medications": [
+      "Warfarin"
+    ],
+    "new_medications": [
+      "Ketoconazole"
+    ],
+    "lab_values": {
+      "Creatinine": 1.1,
+      "eGFR": 82.0
+    },
+    "expected_risk": "SEVERE",
+    "expected_alerts": [
+      "Drug Interaction"
+    ],
+    "clinical_reference": [
+      "FDA Label"
+    ]
+  },
+  {
+    "patient_id": "P042",
+    "age": 80,
+    "gender": "Female",
+    "pregnant": false,
+    "weight": 53,
+    "height": 151,
+    "allergies": [],
+    "medical_conditions": [
+      "Anxiety"
+    ],
+    "renal_function": "Normal",
+    "hepatic_function": "Normal",
+    "current_medications": [],
+    "new_medications": [
+      "Alprazolam"
+    ],
+    "lab_values": {
+      "Creatinine": 0.8,
+      "eGFR": 60.0
+    },
+    "expected_risk": "MODERATE",
+    "expected_alerts": [
+      "Geriatric Caution"
+    ],
+    "clinical_reference": [
+      "Beers Criteria"
+    ]
+  },
+  {
+    "patient_id": "P043",
+    "age": 28,
+    "gender": "Female",
+    "pregnant": true,
+    "weight": 63,
+    "height": 160,
+    "allergies": [],
+    "medical_conditions": [
+      "Hyperlipidemia"
+    ],
+    "renal_function": "Normal",
+    "hepatic_function": "Normal",
+    "current_medications": [],
+    "new_medications": [
+      "Atorvastatin"
+    ],
+    "lab_values": {
+      "Creatinine": 0.6,
+      "eGFR": 110.0
+    },
+    "expected_risk": "SEVERE",
+    "expected_alerts": [
+      "Pregnancy Contraindication"
+    ],
+    "clinical_reference": [
+      "FDA Label"
+    ]
+  },
+  {
+    "patient_id": "P044",
+    "age": 40,
+    "gender": "Male",
+    "pregnant": false,
+    "weight": 80,
+    "height": 178,
+    "allergies": [],
+    "medical_conditions": [
+      "GERD"
+    ],
+    "renal_function": "Normal",
+    "hepatic_function": "Normal",
+    "current_medications": [],
+    "new_medications": [
+      "Omeprazole"
+    ],
+    "lab_values": {
+      "Creatinine": 0.9,
+      "eGFR": 94.0
+    },
+    "expected_risk": "SAFE",
+    "expected_alerts": [],
+    "clinical_reference": []
+  },
+  {
+    "patient_id": "P045",
+    "age": 36,
+    "gender": "Female",
+    "pregnant": false,
+    "weight": 61,
+    "height": 164,
+    "allergies": [],
+    "medical_conditions": [
+      "Hypothyroidism"
+    ],
+    "renal_function": "Normal",
+    "hepatic_function": "Normal",
+    "current_medications": [],
+    "new_medications": [
+      "Levothyroxine"
+    ],
+    "lab_values": {
+      "Creatinine": 0.7,
+      "eGFR": 100.0
+    },
+    "expected_risk": "SAFE",
+    "expected_alerts": [],
+    "clinical_reference": []
+  },
+  {
+    "patient_id": "P046",
+    "age": 56,
+    "gender": "Male",
+    "pregnant": false,
+    "weight": 79,
+    "height": 171,
+    "allergies": [],
+    "medical_conditions": [
+      "Liver Cirrhosis",
+      "Osteoarthritis"
+    ],
+    "renal_function": "Normal",
+    "hepatic_function": "Severe",
+    "current_medications": [],
+    "new_medications": [
+      "Acetaminophen"
+    ],
+    "lab_values": {
+      "Creatinine": 1.0,
+      "eGFR": 85.0
+    },
+    "expected_risk": "SEVERE",
+    "expected_alerts": [
+      "Hepatic Contraindication"
+    ],
+    "clinical_reference": [
+      "FDA Label",
+      "Clinical Guidelines"
+    ]
+  },
+  {
+    "patient_id": "P047",
+    "age": 38,
+    "gender": "Female",
+    "pregnant": false,
+    "weight": 68,
+    "height": 166,
+    "allergies": [],
+    "medical_conditions": [
+      "Depression",
+      "Chronic Pain"
+    ],
+    "renal_function": "Normal",
+    "hepatic_function": "Normal",
+    "current_medications": [
+      "Sertraline"
+    ],
+    "new_medications": [
+      "Tramadol"
+    ],
+    "lab_values": {
+      "Creatinine": 0.8,
+      "eGFR": 96.0
+    },
+    "expected_risk": "MODERATE",
+    "expected_alerts": [
+      "Drug Interaction"
+    ],
+    "clinical_reference": [
+      "FDA Label"
+    ]
+  },
+  {
+    "patient_id": "P048",
+    "age": 44,
+    "gender": "Male",
+    "pregnant": false,
+    "weight": 75,
+    "height": 174,
+    "allergies": [
+      "Codeine"
+    ],
+    "medical_conditions": [
+      "Severe Pain"
+    ],
+    "renal_function": "Normal",
+    "hepatic_function": "Normal",
+    "current_medications": [],
+    "new_medications": [
+      "Morphine"
+    ],
+    "lab_values": {
+      "Creatinine": 0.9,
+      "eGFR": 90.0
+    },
+    "expected_risk": "MODERATE",
+    "expected_alerts": [
+      "Drug Allergy Conflict"
+    ],
+    "clinical_reference": [
+      "FDA Label"
+    ]
+  },
+  {
+    "patient_id": "P049",
+    "age": 12,
+    "gender": "Female",
+    "pregnant": false,
+    "weight": 40,
+    "height": 145,
+    "allergies": [],
+    "medical_conditions": [
+      "Viral Fever"
+    ],
+    "renal_function": "Normal",
+    "hepatic_function": "Normal",
+    "current_medications": [],
+    "new_medications": [
+      "Aspirin"
+    ],
+    "lab_values": {
+      "Creatinine": 0.5,
+      "eGFR": 110.0
+    },
+    "expected_risk": "SEVERE",
+    "expected_alerts": [
+      "Pediatric Contraindication"
+    ],
+    "clinical_reference": [
+      "FDA Safety Warning"
+    ]
+  },
+  {
+    "patient_id": "P050",
+    "age": 49,
+    "gender": "Male",
+    "pregnant": false,
+    "weight": 82,
+    "height": 178,
+    "allergies": [],
+    "medical_conditions": [
+      "Diabetes"
+    ],
+    "renal_function": "Normal",
+    "hepatic_function": "Normal",
+    "current_medications": [],
+    "new_medications": [
+      "Metformin"
+    ],
+    "lab_values": {
+      "Creatinine": 0.9,
+      "eGFR": 94.0
+    },
+    "expected_risk": "SAFE",
+    "expected_alerts": [],
+    "clinical_reference": []
+  }
+]

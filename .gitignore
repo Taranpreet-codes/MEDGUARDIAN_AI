@@ -1,0 +1,42 @@
+# Environment and local secret configuration
+.env
+.env.local
+.env.*.local
+*.env
+
+# Python & Django
+__pycache__/
+*.py[cod]
+*$py.class
+*.sqlite3
+db.sqlite3
+media/
+*.log
+
+# Celery & Cache
+celerybeat-schedule
+.cache/
+
+# Virtual Environment
+.venv/
+env/
+venv/
+ENV/
+
+# Vector Store
+chroma_db/
+/chroma_db/
+backend/chroma_db/
+
+# Node & Frontend
+node_modules/
+dist/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IDE & OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

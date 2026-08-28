@@ -1,0 +1,31 @@
+WORLD HEALTH ORGANIZATION (WHO) PATIENT SAFETY FACT SHEET (2023)
+
+Patient safety is defined as "the absence of preventable harm to a patient and reduction of risk of unnecessary harm associated with health care to an acceptable minimum." Within the broader health system context, it is "a framework of organized activities that creates cultures, processes, procedures, behaviours, technologies and environments in health care that consistently and sustainably lower risks, reduce the occurrence of avoidable harm, make error less likely and reduce impact of harm when it does occur."
+
+KEY FACTS:
+- Around 1 in every 10 patients is harmed in health care and more than 3 million deaths occur annually due to unsafe care. In low-to-middle income countries, as many as 4 in 100 people die from unsafe care.
+- Above 50% of patient harm (1 in every 20 patients) is preventable; half of this harm is attributed to medications.
+- Medication-related harm affects 1 out of every 30 patients in health care, with more than a quarter of this harm regarded as severe or life threatening. Half of the avoidable harm in health care is related to medications.
+- Some estimates suggest that as many as 4 in 10 patients are harmed in primary and ambulatory settings, while up to 80% (23.6-85%) of this harm can be avoided.
+- Patient harm potentially reduces global economic growth by 0.7% a year. On a global scale, the indirect cost of harm amounts to trillions of US dollars each year.
+- Investment in reducing patient harm can lead to significant financial savings, and more importantly better patient outcomes. An example of a good return on investment is patient engagement, which, if done well, can reduce the burden of harm by up to 15%.
+
+COMMON SOURCES OF PATIENT HARM:
+1. Medication errors: Medication-related harm affects 1 out of every 30 patients in health care, with more than a quarter of this harm regarded as severe or life threatening. Half of the avoidable harm in health care is related to medications.
+2. Surgical errors: Over 300 million surgical procedures are performed each year. 10% of preventable patient harm occurs in surgical settings.
+3. Health care-associated infections: These result in extended hospital stays, long-standing disability, increased antimicrobial resistance, and avoidable deaths.
+4. Sepsis: Of all sepsis cases in hospitals, 23.6% are health care-associated, and 24.4% of affected patients die.
+5. Diagnostic errors: These occur in 5-20% of physician-patient encounters.
+6. Patient falls: Falls are the most frequent adverse events in hospitals.
+7. Venous thromboembolism (blood clots): A major contributor to global disease burden and preventable complication.
+8. Pressure ulcers: Affect more than 1 in 10 adult patients admitted to hospitals.
+9. Unsafe transfusion practices: Expose patients to adverse transfusion reactions and infections.
+10. Patient misidentification: Can lead to wrong-site surgery and other catastrophic errors.
+11. Unsafe injection practices: Spread infections like hepatitis B, hepatitis C, and HIV.
+
+FACTORS LEADING TO PATIENT HARM:
+- System and organizational factors: complexity of medical interventions, inadequate processes, disruptions in workflow/care coordination, resource constraints, inadequate staffing/competencies.
+- Technological factors: issues with electronic health records, medication administration systems, or misuse of technology.
+- Human factors and behaviour: communication breakdown, ineffective teamwork, fatigue, burnout, and cognitive bias.
+- Patient-related factors: limited health literacy, lack of engagement, and non-adherence.
+- External factors: absence of policies, inconsistent regulations, economic pressures, environmental challenges.

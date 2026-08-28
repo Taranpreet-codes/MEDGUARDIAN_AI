@@ -1,0 +1,22 @@
+{
+  "drug_name": "ibuprofen",
+  "brand_names": [
+    "Ibuprofen Dye Free"
+  ],
+  "generic_name": [
+    "IBUPROFEN"
+  ],
+  "publication_date": "2026-04-29",
+  "version": "17",
+  "url": "https://open.fda.gov/apis/drug/label/",
+  "indications": "Uses temporarily relieves minor aches and pains due to: headache toothache backache menstrual cramps the common cold muscular aches minor pain of arthritis temporarily reduces fever",
+  "contraindications": "None documented",
+  "warnings_precautions": "None documented",
+  "boxed_warning": "None documented",
+  "pregnancy": "None documented",
+  "breastfeeding": "None documented",
+  "pediatric_use": "None documented",
+  "geriatric_use": "None documented",
+  "drug_interactions": "None documented",
+  "dosage_and_administration": "Directions do not take more than directed the smallest effective dose should be used adults and children 12 years and over: take 1 tablet every 4 to 6 hours while symptoms persist if pain or fever does not respond to 1 tablet, 2 tablets may be used do not exceed 6 tablets in 24 hours, unless directed by a doctor children under 12 years: ask a doctor"
+}

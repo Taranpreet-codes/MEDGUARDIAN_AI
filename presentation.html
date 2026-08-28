@@ -1,0 +1,1513 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MedGuardian AI — Proactive Medication Digital Twin Presentation</title>
+  <!-- Google Fonts: Outfit for titles, Inter for body -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap"
+    rel="stylesheet">
+
+  <style>
+    /* CSS Reset & Variables */
+    :root {
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --secondary: #0d9488;
+      --secondary-light: #f0fdfa;
+      --danger: #dc2626;
+      --danger-light: #fef2f2;
+      --warning: #d97706;
+      --warning-light: #fffbeb;
+      --success: #16a34a;
+      --success-light: #f0fdf4;
+      --background: #f8fafc;
+      --card-bg: rgba(255, 255, 255, 0.85);
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --border: #e2e8f0;
+      --shadow: 0 10px 30px -10px rgba(15, 23, 42, 0.08);
+      --font-title: 'Outfit', -apple-system, sans-serif;
+      --font-body: 'Inter', -apple-system, sans-serif;
+      --font-mono: 'Fira Code', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background-color: var(--background);
+      background-image:
+        radial-gradient(at 0% 0%, hsla(210, 100%, 98%, 1) 0px, transparent 50%),
+        radial-gradient(at 50% 0%, hsla(220, 100%, 97%, 1) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, hsla(180, 100%, 97%, 1) 0px, transparent 50%),
+        radial-gradient(at 50% 100%, hsla(215, 100%, 96%, 1) 0px, transparent 50%);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* Presentation Layout */
+    .presentation-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      max-width: 1280px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 24px;
+      justify-content: center;
+      position: relative;
+    }
+
+    /* Header styling */
+    .deck-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding: 0 10px;
+    }
+
+    .deck-logo {
+      font-family: var(--font-title);
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .deck-logo span {
+      color: var(--text-main);
+    }
+
+    .audience-tag {
+      background-color: var(--primary-light);
+      color: var(--primary);
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 9999px;
+      border: 1px solid rgba(37, 99, 235, 0.15);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Slides Wrapper */
+    .slides-wrapper {
+      position: relative;
+      flex: 1;
+      min-height: 580px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Slide Card */
+    .slide {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      border-radius: 24px;
+      box-shadow: var(--shadow), 0 1px 3px rgba(0, 0, 0, 0.02);
+      padding: 40px 50px;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(15px) scale(0.98);
+      transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .slide.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0) scale(1);
+      z-index: 10;
+    }
+
+    /* Typography & Structure in Slides */
+    .slide-title {
+      font-family: var(--font-title);
+      font-size: 2.25rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 24px;
+      line-height: 1.2;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .slide-title span.accent {
+      color: var(--primary);
+    }
+
+    .slide-content {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 30px;
+      overflow-y: auto;
+    }
+
+    .grid-2col {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    /* Content components */
+    p {
+      line-height: 1.6;
+      color: var(--text-muted);
+      font-size: 1rem;
+      margin-bottom: 12px;
+    }
+
+    h3 {
+      font-family: var(--font-title);
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 12px;
+    }
+
+    /* Custom Bullet Lists */
+    .styled-list {
+      list-style: none;
+    }
+
+    .styled-list li {
+      position: relative;
+      padding-left: 28px;
+      margin-bottom: 16px;
+      line-height: 1.5;
+      color: var(--text-muted);
+    }
+
+    .styled-list li strong {
+      color: var(--text-main);
+    }
+
+    .styled-list li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 6px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--primary);
+      border: 2px solid var(--primary-light);
+      box-shadow: 0 0 0 2px var(--primary);
+    }
+
+    /* Tech Pill Badge container */
+    .tech-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .tech-pill {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 500;
+      background: var(--background);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      padding: 4px 10px;
+      border-radius: 6px;
+    }
+
+    /* Code Blocks */
+    .code-window {
+      background: #fafafa;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .code-header {
+      background: #f1f5f9;
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .code-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #cbd5e1;
+    }
+
+    .code-dot.red {
+      background: #ef4444;
+    }
+
+    .code-dot.yellow {
+      background: #f59e0b;
+    }
+
+    .code-dot.green {
+      background: #10b981;
+    }
+
+    .code-title {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-left: 8px;
+      font-weight: 500;
+    }
+
+    .code-body {
+      padding: 16px;
+      overflow-x: auto;
+      line-height: 1.5;
+      color: #334155;
+      flex: 1;
+      background: #ffffff;
+    }
+
+    .code-keyword {
+      color: #d927c7;
+      font-weight: 500;
+    }
+
+    .code-string {
+      color: #0d9488;
+    }
+
+    .code-comment {
+      color: #64748b;
+      font-style: italic;
+    }
+
+    .code-function {
+      color: #2563eb;
+    }
+
+    .code-number {
+      color: #ca8a04;
+    }
+
+    /* Comparison Table */
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 0.95rem;
+    }
+
+    .comparison-table th {
+      background: #f1f5f9;
+      color: var(--text-main);
+      text-align: left;
+      font-weight: 600;
+      padding: 12px 16px;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .comparison-table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-muted);
+    }
+
+    .comparison-table tr:hover {
+      background: var(--primary-light);
+    }
+
+    .comparison-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* Highlight Cards */
+    .highlight-card {
+      background: #ffffff;
+      border-left: 4px solid var(--primary);
+      padding: 20px;
+      border-radius: 0 16px 16px 0;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+      border-top: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .highlight-card.danger {
+      border-left-color: var(--danger);
+      background: #fffdfd;
+    }
+
+    .highlight-card.warning {
+      border-left-color: var(--warning);
+      background: #fdfdfb;
+    }
+
+    .highlight-card.success {
+      border-left-color: var(--success);
+      background: #fcfdfc;
+    }
+
+    /* Controls & Navigation Footer */
+    .deck-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 24px;
+      padding: 0 10px;
+    }
+
+    .progress-container {
+      flex: 1;
+      max-width: 400px;
+      height: 6px;
+      background: var(--border);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-right: 24px;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 11%;
+      background: var(--primary);
+      border-radius: 999px;
+      transition: width 0.3s ease;
+    }
+
+    .nav-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-nav {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      padding: 10px 18px;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+    }
+
+    .btn-nav:hover:not(:disabled) {
+      background: var(--primary-light);
+      border-color: rgba(37, 99, 235, 0.2);
+      color: var(--primary);
+      transform: translateY(-1px);
+    }
+
+    .btn-nav:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .slide-indicator {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      min-width: 80px;
+      text-align: center;
+    }
+
+    .keyboard-hint {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .key-badge {
+      font-family: var(--font-mono);
+      background: #ffffff;
+      border: 1px solid var(--border);
+      padding: 2px 6px;
+      border-radius: 4px;
+      box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+    }
+
+    /* Slide specific styles */
+    /* Slide 1 - Title slide */
+    .title-slide-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      height: 100%;
+    }
+
+    .logo-badge {
+      font-size: 3rem;
+      margin-bottom: 20px;
+      animation: float 4s ease-in-out infinite;
+    }
+
+    .title-slide-container h1 {
+      font-family: var(--font-title);
+      font-size: 3.5rem;
+      font-weight: 800;
+      color: var(--text-main);
+      line-height: 1.15;
+      margin-bottom: 16px;
+      letter-spacing: -0.02em;
+    }
+
+    .title-slide-container h1 span {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .title-slide-container h2 {
+      font-family: var(--font-body);
+      font-size: 1.35rem;
+      font-weight: 400;
+      color: var(--text-muted);
+      max-width: 700px;
+      margin-bottom: 40px;
+      line-height: 1.5;
+    }
+
+    .presenter-info {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .presenter-name {
+      font-family: var(--font-title);
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: var(--text-main);
+    }
+
+    .presenter-role {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    /* Slide 2 & 3 - Side by side comparisons */
+    .analogy-title {
+      font-family: var(--font-title);
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .analogy-title.right {
+      color: var(--secondary);
+    }
+
+    .stat-badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      margin-right: 4px;
+    }
+
+    .stat-badge.red {
+      background: var(--danger-light);
+      color: var(--danger);
+    }
+
+    .stat-badge.blue {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    /* Slide 5 Architecture layout */
+    .arch-grid {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 30px;
+      height: 100%;
+    }
+
+    /* Diagram Styling */
+    .arch-diagram {
+      border: 1px dashed var(--border);
+      border-radius: 16px;
+      background: #ffffff;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      position: relative;
+    }
+
+    .arch-layer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .arch-node {
+      flex: 1;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      text-align: center;
+      font-size: 0.8rem;
+      font-weight: 600;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.01);
+      transition: all 0.2s;
+    }
+
+    .arch-node:hover {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      transform: translateY(-1px);
+    }
+
+    .arch-node.core {
+      background: var(--primary-light);
+      border-color: rgba(37, 99, 235, 0.2);
+      color: var(--primary);
+    }
+
+    .arch-node.worker {
+      background: var(--secondary-light);
+      border-color: rgba(13, 148, 136, 0.2);
+      color: var(--secondary);
+    }
+
+    .arch-node.api {
+      background: var(--warning-light);
+      border-color: rgba(217, 119, 6, 0.2);
+      color: var(--warning);
+    }
+
+    .arch-flow-arrow {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 1.25rem;
+      line-height: 1;
+      margin: -5px 0;
+      z-index: 1;
+    }
+
+    /* Agent Diagram Styling */
+    .agent-grid {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 30px;
+      height: 100%;
+    }
+
+    .agent-diagram {
+      border: 1px dashed var(--border);
+      border-radius: 16px;
+      background: #ffffff;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      position: relative;
+      height: 100%;
+    }
+
+    .agent-layer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .agent-node {
+      flex: 1;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      text-align: center;
+      font-size: 0.8rem;
+      font-weight: 600;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.01);
+      transition: all 0.2s;
+    }
+
+    .agent-node:hover {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      transform: translateY(-1px);
+    }
+
+    .agent-node.coordinator {
+      background: var(--primary-light);
+      border-color: rgba(37, 99, 235, 0.2);
+      color: var(--primary);
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    .agent-node.specialized {
+      background: var(--secondary-light);
+      border-color: rgba(13, 148, 136, 0.2);
+      color: var(--secondary);
+    }
+
+    .agent-node.mcp {
+      background: var(--warning-light);
+      border-color: rgba(217, 119, 6, 0.2);
+      color: var(--warning);
+      font-weight: 600;
+    }
+
+    /* Source file links badges */
+    .code-ref-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      background: #f1f5f9;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      padding: 3px 8px;
+      border-radius: 6px;
+      text-decoration: none;
+      margin-top: 15px;
+      transition: all 0.2s;
+      width: fit-content;
+    }
+
+    .code-ref-badge:hover {
+      background: var(--primary-light);
+      border-color: rgba(37, 99, 235, 0.2);
+      color: var(--primary);
+    }
+
+    /* WHO Stats Card Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      margin-top: 10px;
+    }
+
+    .stat-card {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.2s;
+    }
+
+    .stat-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow);
+    }
+
+    .stat-card-num {
+      font-family: var(--font-title);
+      font-size: 2.25rem;
+      font-weight: 800;
+      color: var(--primary);
+      line-height: 1.1;
+      margin-bottom: 8px;
+    }
+
+    .stat-card-num.danger {
+      color: var(--danger);
+    }
+
+    .stat-card-num.warning {
+      color: var(--warning);
+    }
+
+    .stat-card-title {
+      font-family: var(--font-title);
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 6px;
+    }
+
+    .stat-card-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* Animations */
+    @keyframes float {
+
+      0%,
+      100% {
+        transform: translateY(0px);
+      }
+
+      50% {
+        transform: translateY(-10px);
+      }
+    }
+
+    /* Mobile Warning */
+    .mobile-warning {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: #ffffff;
+      z-index: 9999;
+      padding: 30px;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    @media (max-width: 768px) {
+      .mobile-warning {
+        display: flex;
+      }
+
+      .presentation-container {
+        display: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Mobile warning cover -->
+  <div class="mobile-warning">
+    <div style="font-size: 3rem; margin-bottom: 20px;">💻</div>
+    <h2 style="font-family: var(--font-title); margin-bottom: 12px;">Desktop Screen Required</h2>
+    <p>This presentation deck is optimized for standard landscape displays (projectors, laptops, and tablets) to
+      preserve code formatting and side-by-side technical diagrams.</p>
+  </div>
+
+  <div class="presentation-container">
+
+    <!-- Top Deck Header -->
+    <header class="deck-header">
+      <div class="deck-logo">
+        🛡️ MedGuardian <span>AI</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <span id="slide-topic-badge" class="audience-tag"
+          style="background-color: #f1f5f9; color: var(--text-muted); border-color: var(--border);">Overview</span>
+        <div class="audience-tag">Clinical CDSS Platform</div>
+      </div>
+    </header>
+
+    <!-- Slides Wrapper -->
+    <main class="slides-wrapper">
+
+      <!-- SLIDE 1: TITLE SLIDE -->
+      <section class="slide active" data-topic="Introduction">
+        <div class="title-slide-container">
+          <div class="logo-badge">🛡️</div>
+          <h1>MedGuardian <span>AI</span></h1>
+          <h2>A Proactive Medication Digital Twin: Implementing Active Event-Driven Safety Auditing and Continuous
+            Clinical Surveillance</h2>
+
+          <div class="presenter-info">
+            <span class="presenter-name">Taranpreet Kaur</span>
+            <span class="presenter-role"></span>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 2: THE PROBLEM (SAFETY CRISIS) -->
+      <section class="slide" data-topic="The Problem">
+        <h2 class="slide-title">The Global Problem: <span class="accent">Medication Safety Crisis</span></h2>
+        <div class="slide-content grid-2col">
+          <div style="display: flex; flex-direction: column; justify-content: center;">
+            <div class="analogy-title">🏥 The Challenge of Polypharmacy</div>
+            <p
+              style="margin-bottom: 16px; font-size: 1.05rem; line-height: 1.6; color: var(--text-main); font-weight: 500;">
+              Medication errors and adverse drug interactions remain one of the leading causes of preventable patient
+              harm worldwide.
+            </p>
+            <p style="margin-bottom: 16px; font-size: 0.95rem; line-height: 1.6; color: var(--text-muted);">
+              Modern patients, especially those suffering from chronic diseases such as diabetes, hypertension, heart
+              disease, or kidney disease, often take multiple medicines simultaneously—a practice known as
+              <strong>polypharmacy</strong>.
+            </p>
+            <div class="highlight-card warning"
+              style="padding: 14px 18px; margin-top: 10px; border-radius: 0 16px 16px 0;">
+              <strong style="color: var(--warning); display: block; margin-bottom: 4px; font-size: 0.95rem;">Exponential
+                Safety Cascades</strong>
+              <p style="font-size: 0.85rem; margin-bottom: 0; line-height: 1.5; color: var(--text-muted);">
+                As the number of medicines increases, the complexity of managing safety cascades exponentially,
+                drastically increasing the risk of severe drug-drug interactions, incorrect dosages, allergy conflicts,
+                and organ-specific complications.
+              </p>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; justify-content: center;">
+            <div class="analogy-title right">📊 Global Safety & Economic Toll</div>
+            <div class="stats-grid" style="grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 5px;">
+              <div class="stat-card" style="padding: 14px; border-radius: 12px;">
+                <div>
+                  <div class="stat-card-num danger" style="font-size: 1.8rem; margin-bottom: 4px;">3M+</div>
+                  <div class="stat-card-title" style="font-size: 0.85rem; margin-bottom: 2px;">Annual Deaths</div>
+                </div>
+                <div class="stat-card-desc" style="font-size: 0.75rem; line-height: 1.3;">1 in 10 patients is harmed
+                  during healthcare, leading to millions of preventable deaths (WHO).</div>
+              </div>
+
+              <div class="stat-card" style="padding: 14px; border-radius: 12px;">
+                <div>
+                  <div class="stat-card-num danger" style="font-size: 1.8rem; margin-bottom: 4px;">50%+</div>
+                  <div class="stat-card-title" style="font-size: 0.85rem; margin-bottom: 2px;">Preventable Harm</div>
+                </div>
+                <div class="stat-card-desc" style="font-size: 0.75rem; line-height: 1.3;">Over half of all patient harm
+                  is avoidable, and medication errors represent the leading source of preventable injury.</div>
+              </div>
+
+              <div class="stat-card" style="padding: 14px; border-radius: 12px;">
+                <div>
+                  <div class="stat-card-num warning" style="font-size: 1.8rem; margin-bottom: 4px;">53% - 80%</div>
+                  <div class="stat-card-title" style="font-size: 0.85rem; margin-bottom: 2px;">Prescribing Errors</div>
+                </div>
+                <div class="stat-card-desc" style="font-size: 0.75rem; line-height: 1.3;">Most avoidable drug harm
+                  begins during prescribing, particularly in resource-constrained regions.</div>
+              </div>
+
+              <div class="stat-card" style="padding: 14px; border-radius: 12px;">
+                <div>
+                  <div class="stat-card-num" style="font-size: 1.8rem; margin-bottom: 4px;">$42B</div>
+                  <div class="stat-card-title" style="font-size: 0.85rem; margin-bottom: 2px;">Global Annual Cost</div>
+                </div>
+                <div class="stat-card-desc" style="font-size: 0.75rem; line-height: 1.3;">Unsafe medication practices
+                  inflict billions of dollars in unnecessary care and hospital readmission costs globally.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+
+      <!-- SLIDE 3: THE SOLUTION -->
+      <section class="slide" data-topic="The Solution">
+        <h2 class="slide-title">The Solution: <span class="accent">MedGuardian AI</span></h2>
+        <div class="slide-content grid-2col">
+          <div style="display: flex; flex-direction: column; justify-content: center;">
+            <div class="analogy-title">🛡️ A Continuous Safety Assistant</div>
+            <p
+              style="margin-bottom: 12px; font-size: 1.05rem; line-height: 1.5; color: var(--text-main); font-weight: 500;">
+              MedGuardian AI is designed to solve these problems by acting as a continuous medication safety assistant,
+              not as a replacement for doctors.
+            </p>
+            <p style="margin-bottom: 16px; font-size: 0.95rem; line-height: 1.5; color: var(--text-muted);">
+              Instead of checking medications only during active consultations, the platform functions as a
+              <strong>Medication Digital Twin</strong>, continuously monitoring key patient data.
+            </p>
+
+            <div class="highlight-card success" style="padding: 16px; margin-top: 10px; border-radius: 16px;">
+              <strong
+                style="color: var(--success); display: block; margin-bottom: 6px; font-size: 0.95rem; font-family: var(--font-title);">Objective
+                of the Project</strong>
+              <p style="font-size: 0.85rem; margin-bottom: 0; line-height: 1.5; color: var(--text-muted);">
+                The core objective of MedGuardian AI is to reduce preventable medication-related harm by continuously
+                monitoring patient medications, health conditions, laboratory values, and clinical guidelines, thereby
+                assisting healthcare professionals in identifying potential medication risks before they result in
+                adverse outcomes.
+              </p>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; justify-content: center;">
+            <div class="analogy-title right">⚙️ Active Digital Twin Monitoring</div>
+            <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 10px;">The engine performs automatic
+              safety audits whenever any of these parameters shift:</p>
+
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <div class="highlight-card"
+                style="display: flex; align-items: center; gap: 12px; padding: 10px 14px; margin: 0; background: #fafafa; border: 1px solid var(--border); border-radius: 12px;">
+                <span style="font-size: 1.3rem;">👤</span>
+                <div>
+                  <strong style="font-size: 0.9rem; color: var(--text-main); display: block;">Patient Profile
+                    Updates</strong>
+                  <span style="display: block; font-size: 0.78rem; color: var(--text-muted); line-height: 1.2;">Tracks
+                    physiological shifts, such as pregnancy onset or demographic changes.</span>
+                </div>
+              </div>
+
+              <div class="highlight-card"
+                style="display: flex; align-items: center; gap: 12px; padding: 10px 14px; margin: 0; background: #fafafa; border: 1px solid var(--border); border-radius: 12px;">
+                <span style="font-size: 1.3rem;">📄</span>
+                <div>
+                  <strong style="font-size: 0.9rem; color: var(--text-main); display: block;">New Prescription
+                    Uploads</strong>
+                  <span style="display: block; font-size: 0.78rem; color: var(--text-muted); line-height: 1.2;">Parses
+                    prescription scan uploads using AI-based OCR and Medical NER.</span>
+                </div>
+              </div>
+
+              <div class="highlight-card"
+                style="display: flex; align-items: center; gap: 12px; padding: 10px 14px; margin: 0; background: #fafafa; border: 1px solid var(--border); border-radius: 12px;">
+                <span style="font-size: 1.3rem;">🧪</span>
+                <div>
+                  <strong style="font-size: 0.9rem; color: var(--text-main); display: block;">Laboratory
+                    Reports</strong>
+                  <span style="display: block; font-size: 0.78rem; color: var(--text-muted); line-height: 1.2;">Monitors
+                    critical biochemical and renal capacity logs (such as eGFR rates).</span>
+                </div>
+              </div>
+
+              <div class="highlight-card"
+                style="display: flex; align-items: center; gap: 12px; padding: 10px 14px; margin: 0; background: #fafafa; border: 1px solid var(--border); border-radius: 12px;">
+                <span style="font-size: 1.3rem;">🚫</span>
+                <div>
+                  <strong style="font-size: 0.9rem; color: var(--text-main); display: block;">Documented
+                    Allergies</strong>
+                  <span
+                    style="display: block; font-size: 0.78rem; color: var(--text-muted); line-height: 1.2;">Cross-references
+                    active ingredients with patient allergy records.</span>
+                </div>
+              </div>
+
+              <div class="highlight-card"
+                style="display: flex; align-items: center; gap: 12px; padding: 10px 14px; margin: 0; background: #fafafa; border: 1px solid var(--border); border-radius: 12px;">
+                <span style="font-size: 1.3rem;">💊</span>
+                <div>
+                  <strong style="font-size: 0.9rem; color: var(--text-main); display: block;">Cabinet Medication
+                    Changes</strong>
+                  <span style="display: block; font-size: 0.78rem; color: var(--text-muted); line-height: 1.2;">Runs
+                    instant safety audits when adding or deactivating active drugs.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 4: TECHNOLOGY STACK -->
+      <section class="slide" data-topic="Tech Stack">
+        <h2 class="slide-title" style="margin-bottom: 8px;">Technology Stack: <span class="accent">Clinical-Tech
+            Infrastructure</span></h2>
+        <div class="slide-content"
+          style="display: flex; flex-direction: column; justify-content: center; height: 100%; padding-top: 0;">
+          <table class="comparison-table" style="font-size: 0.8rem; margin-top: 2px; width: 100%;">
+            <thead>
+              <tr>
+                <th style="width: 20%; padding: 6px 10px;">Architecture Layer</th>
+                <th style="width: 35%; padding: 6px 10px;">Technologies & Frameworks</th>
+                <th style="width: 45%; padding: 6px 10px;">Engineering Scope & Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="padding: 5px 10px; line-height: 1.2;"><strong>Backend Core</strong></td>
+                <td style="padding: 5px 10px; line-height: 1.2;"><code class="key-badge"
+                    style="font-size: 0.72rem; padding: 1px 4px;">Python 3.10+</code> <code class="key-badge"
+                    style="font-size: 0.72rem; padding: 1px 4px;">Django 4.2.x</code> <code class="key-badge"
+                    style="font-size: 0.72rem; padding: 1px 4px;">DRF</code></td>
+                <td style="padding: 5px 10px; line-height: 1.2; color: var(--text-muted);">MVC core REST API endpoints,
+                  patient safety model logs, and views.</td>
+              </tr>
+              <tr>
+                <td style="padding: 5px 10px; line-height: 1.2;"><strong>Authentication</strong></td>
+                <td style="padding: 5px 10px; line-height: 1.2;"><code class="key-badge"
+                    style="font-size: 0.72rem; padding: 1px 4px;">SimpleJWT (JWT)</code></td>
+                <td style="padding: 5px 10px; line-height: 1.2; color: var(--text-muted);">Secure stateless token
+                  authentication for API requests.</td>
+              </tr>
+              <tr>
+                <td style="padding: 5px 10px; line-height: 1.2;"><strong>Generative AI</strong></td>
+                <td style="padding: 5px 10px; line-height: 1.2;"><code class="key-badge"
+                    style="font-size: 0.72rem; padding: 1px 4px;">google-genai</code> <code class="key-badge"
+                    style="font-size: 0.72rem; padding: 1px 4px;">gemini-2.5-flash</code> <code class="key-badge"
+                    style="font-size: 0.72rem; padding: 1px 4px;">text-embedding-004</code></td>
+                <td style="padding: 5px 10px; line-height: 1.2; color: var(--text-muted);">OCR parsing, RAG embedding,
+                  and clinical report synthesis (Pydantic enforced).</td>
+              </tr>
+              <tr>
+                <td style="padding: 5px 10px; line-height: 1.2;"><strong>Clinical APIs</strong></td>
+                <td style="padding: 5px 10px; line-height: 1.2;"><code class="key-badge"
+                    style="font-size: 0.72rem; padding: 1px 4px;">NLM RxNav</code> <code class="key-badge"
+                    style="font-size: 0.72rem; padding: 1px 4px;">openFDA API</code></td>
+                <td style="padding: 5px 10px; line-height: 1.2; color: var(--text-muted);">Queries RxNorm concept IDs,
+                  checks drug interactions, and fetches FDA warnings.</td>
+              </tr>
+              <tr>
+                <td style="padding: 5px 10px; line-height: 1.2;"><strong>Vector Database</strong></td>
+                <td style="padding: 5px 10px; line-height: 1.2;"><code class="key-badge"
+                    style="font-size: 0.72rem; padding: 1px 4px;">ChromaDB</code></td>
+                <td style="padding: 5px 10px; line-height: 1.2; color: var(--text-muted);">Local vector store hosting
+                  embedded clinical guidelines for RAG retrieval.</td>
+              </tr>
+              <tr>
+                <td style="padding: 5px 10px; line-height: 1.2;"><strong>Task Queue</strong></td>
+                <td style="padding: 5px 10px; line-height: 1.2;"><code class="key-badge"
+                    style="font-size: 0.72rem; padding: 1px 4px;">Celery 5.3.x</code> <code class="key-badge"
+                    style="font-size: 0.72rem; padding: 1px 4px;">Redis</code></td>
+                <td style="padding: 5px 10px; line-height: 1.2; color: var(--text-muted);">Asynchronous pipeline
+                  execution, retry worker, and debouncer.</td>
+              </tr>
+              <tr>
+                <td style="padding: 5px 10px; line-height: 1.2;"><strong>Reports</strong></td>
+                <td style="padding: 5px 10px; line-height: 1.2;"><code class="key-badge"
+                    style="font-size: 0.72rem; padding: 1px 4px;">ReportLab</code> <code class="key-badge"
+                    style="font-size: 0.72rem; padding: 1px 4px;">pypdf</code></td>
+                <td style="padding: 5px 10px; line-height: 1.2; color: var(--text-muted);">PDF document rendering & PDF
+                  guideline text parsing.</td>
+              </tr>
+              <tr>
+                <td style="padding: 5px 10px; line-height: 1.2;"><strong>Frontend Core</strong></td>
+                <td style="padding: 5px 10px; line-height: 1.2;"><code class="key-badge"
+                    style="font-size: 0.72rem; padding: 1px 4px;">React 18</code> <code class="key-badge"
+                    style="font-size: 0.72rem; padding: 1px 4px;">Vite 8</code> <code class="key-badge"
+                    style="font-size: 0.72rem; padding: 1px 4px;">TypeScript</code></td>
+                <td style="padding: 5px 10px; line-height: 1.2; color: var(--text-muted);">Single-Page Application
+                  client architecture and layouts.</td>
+              </tr>
+              <tr>
+                <td style="padding: 5px 10px; line-height: 1.2;"><strong>Styling</strong></td>
+                <td style="padding: 5px 10px; line-height: 1.2;"><code class="key-badge"
+                    style="font-size: 0.72rem; padding: 1px 4px;">Tailwind CSS</code></td>
+                <td style="padding: 5px 10px; line-height: 1.2; color: var(--text-muted);">Utility-first styling with
+                  sleek dark-mode glassmorphic theme.</td>
+              </tr>
+              <tr>
+                <td style="padding: 5px 10px; line-height: 1.2;"><strong>Visualization</strong></td>
+                <td style="padding: 5px 10px; line-height: 1.2;"><code class="key-badge"
+                    style="font-size: 0.72rem; padding: 1px 4px;">Recharts</code> <code class="key-badge"
+                    style="font-size: 0.72rem; padding: 1px 4px;">Lucide React</code></td>
+                <td style="padding: 5px 10px; line-height: 1.2; color: var(--text-muted);">Risk history timeline
+                  charting and vector icons.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- SLIDE 5: SYSTEM ARCHITECTURE -->
+      <section class="slide" data-topic="Architecture">
+        <h2 class="slide-title" style="margin-bottom: 8px;">System Architecture: <span class="accent">The Safety
+            Pipeline</span></h2>
+        <div class="slide-content"
+          style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding-top: 0;">
+          <div
+            style="width: 100%; max-width: 920px; background: #ffffff; border: 1px solid var(--border); border-radius: 16px; padding: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.02); display: flex; justify-content: center; align-items: center; overflow: hidden; margin-bottom: 8px;">
+            <img src="architecture_flowchart.png" alt="System Architecture Flowchart"
+              style="width: 100%; height: auto; max-height: 330px; object-fit: contain; border-radius: 8px;">
+          </div>
+          <div
+            style="display: flex; justify-content: space-between; width: 100%; max-width: 920px; font-size: 0.8rem; color: var(--text-muted);">
+            <span>🛡️ <strong>End-to-End Processing Loop</strong>: From user-uploaded scans to real-time clinician
+              dashboard alert pushes.</span>
+            <a href="file:///D:/neww/Medgaudian_AI/backend/patients/models.py" class="code-ref-badge"
+              style="margin: 0; padding: 4px 10px;">
+              📂 View: backend/patients/models.py (Signal Dispatcher)
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 6: MODULAR SERVICE ORCHESTRATION -->
+      <section class="slide" data-topic="Modular Orchestration">
+        <h2 class="slide-title">Modular Core: <span class="accent">Event-Driven Service Orchestration</span></h2>
+        <div class="slide-content grid-2col" style="align-items: center;">
+          <div style="display: flex; flex-direction: column; justify-content: center;">
+            <div class="analogy-title">🧠 Decoupled Clinical Auditing</div>
+            <p style="font-size: 0.9rem; line-height: 1.4; color: var(--text-muted); margin-bottom: 12px;">
+              MedGuardian AI utilizes a modular, event-driven pattern where specialized service modules execute
+              dedicated sub-tasks coordinated by a central evaluation manager.
+            </p>
+
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <div
+                style="background: #fafafa; border-left: 3px solid var(--primary); padding: 8px 12px; border-radius: 0 8px 8px 0;">
+                <strong style="font-size: 0.85rem; color: var(--text-main); display: block;">1. Coordinator Manager
+                  (Celery + Signals)</strong>
+                <span style="font-size: 0.78rem; color: var(--text-muted); line-height: 1.3; display: block;">Django
+                  post-save signals dispatch asynchronous background reviews to Celery, orchestrating execution
+                  flow.</span>
+              </div>
+
+              <div
+                style="background: #fafafa; border-left: 3px solid var(--primary); padding: 8px 12px; border-radius: 0 8px 8px 0;">
+                <strong style="font-size: 0.85rem; color: var(--text-main); display: block;">2. Deterministic & RAG
+                  Specialists</strong>
+                <span style="font-size: 0.78rem; color: var(--text-muted); line-height: 1.3; display: block;">Combines
+                  NLM RxNav (drug interactions), local fallback rules, and ChromaDB vector guidelines in
+                  parallel.</span>
+              </div>
+
+              <div
+                style="background: #fafafa; border-left: 3px solid var(--primary); padding: 8px 12px; border-radius: 0 8px 8px 0;">
+                <strong style="font-size: 0.85rem; color: var(--text-main); display: block;">3. Intelligent Synthesis
+                  Engine</strong>
+                <span style="font-size: 0.78rem; color: var(--text-muted); line-height: 1.3; display: block;">Gemini 2.5
+                  Flash acts as a clinical synthesis layer, merging structured risk factors into final dossiers.</span>
+              </div>
+            </div>
+
+            <a href="file:///D:/neww/Medgaudian_AI/backend/services/risk_engine.py" class="code-ref-badge"
+              style="margin-top: 15px; align-self: flex-start;">
+              📂 View: backend/services/risk_engine.py (Coordinator Engine)
+            </a>
+          </div>
+
+          <div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+            <div
+              style="width: 100%; background: #ffffff; border: 1px solid var(--border); border-radius: 16px; padding: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.02); display: flex; justify-content: center; align-items: center; overflow: hidden;">
+              <img src="service_flowchart.jpg" alt="Modular Service Collaborative Flowchart"
+                style="width: 100%; height: auto; max-height: 340px; object-fit: contain; border-radius: 8px;">
+            </div>
+            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 6px; text-align: center;">
+              🔄 <strong>Service Architecture</strong>: Decoupled tasks executing modular audits via standard API
+              layers.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 7: CORE FEATURES (3x2 GRID) -->
+      <section class="slide" data-topic="Core Features">
+        <h2 class="slide-title">Core Features: <span class="accent">Engineered Safety & Integration</span></h2>
+        <div class="slide-content"
+          style="display: flex; flex-direction: column; justify-content: center; height: 100%;">
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; width: 100%; margin-top: 10px;">
+            <!-- Card 1: Ingestion -->
+            <div class="stat-card" style="padding: 16px; min-height: 165px; border-radius: 12px;">
+              <div>
+                <div style="font-size: 1.5rem; margin-bottom: 8px;">📸</div>
+                <strong style="font-size: 0.95rem; color: var(--text-main); display: block; margin-bottom: 4px;">1.
+                  Ingestion Pipeline (OCR/NER)</strong>
+              </div>
+              <div class="stat-card-desc" style="font-size: 0.78rem; line-height: 1.35; color: var(--text-muted);">
+                Parses smartphone uploads of prescription scans using Gemini 2.5 Flash Vision, mapping raw text to
+                structured medication schemas.
+              </div>
+            </div>
+
+            <!-- Card 2: RAG -->
+            <div class="stat-card" style="padding: 16px; min-height: 165px; border-radius: 12px;">
+              <div>
+                <div style="font-size: 1.5rem; margin-bottom: 8px;">🧠</div>
+                <strong style="font-size: 0.95rem; color: var(--text-main); display: block; margin-bottom: 4px;">2.
+                  Guideline RAG (ChromaDB)</strong>
+              </div>
+              <div class="stat-card-desc" style="font-size: 0.78rem; line-height: 1.35; color: var(--text-muted);">
+                Indexes PDF safety guidelines inside ChromaDB using text embeddings to ground clinical risk assessments
+                in verified evidence.
+              </div>
+            </div>
+
+            <!-- Card 3: CDS Risk Engine -->
+            <div class="stat-card" style="padding: 16px; min-height: 165px; border-radius: 12px;">
+              <div>
+                <div style="font-size: 1.5rem; margin-bottom: 8px;">⚡</div>
+                <strong style="font-size: 0.95rem; color: var(--text-main); display: block; margin-bottom: 4px;">3.
+                  Clinical Risk Engine</strong>
+              </div>
+              <div class="stat-card-desc" style="font-size: 0.78rem; line-height: 1.35; color: var(--text-muted);">
+                Audits parameters via NLM RxNav APIs and falls back to a deterministic rule-based safety evaluation to
+                guarantee clinical reliability.
+              </div>
+            </div>
+
+            <!-- Card 4: Safety Debouncer -->
+            <div class="stat-card" style="padding: 16px; min-height: 165px; border-radius: 12px;">
+              <div>
+                <div style="font-size: 1.5rem; margin-bottom: 8px;">🔔</div>
+                <strong style="font-size: 0.95rem; color: var(--text-main); display: block; margin-bottom: 4px;">4.
+                  Concurrency Debouncer</strong>
+              </div>
+              <div class="stat-card-desc" style="font-size: 0.78rem; line-height: 1.35; color: var(--text-muted);">
+                Utilizes a Redis-backed atomic lock (10s debounce window) to collapse consecutive triggers, executing
+                asynchronous Celery tasks safely.
+              </div>
+            </div>
+
+            <!-- Card 5: Live Streaming -->
+            <div class="stat-card" style="padding: 16px; min-height: 165px; border-radius: 12px;">
+              <div>
+                <div style="font-size: 1.5rem; margin-bottom: 8px;">📡</div>
+                <strong style="font-size: 0.95rem; color: var(--text-main); display: block; margin-bottom: 4px;">5. Live
+                  Alert Streams (SSE)</strong>
+              </div>
+              <div class="stat-card-desc" style="font-size: 0.78rem; line-height: 1.35; color: var(--text-muted);">
+                Exposes Server-Sent Events (EventSource) to push safety alerts directly to clinician screens instantly
+                with REST polling fallbacks.
+              </div>
+            </div>
+
+            <!-- Card 6: PDF Reports -->
+            <div class="stat-card" style="padding: 16px; min-height: 165px; border-radius: 12px;">
+              <div>
+                <div style="font-size: 1.5rem; margin-bottom: 8px;">📄</div>
+                <strong style="font-size: 0.95rem; color: var(--text-main); display: block; margin-bottom: 4px;">6.
+                  Dynamic Safety Reports</strong>
+              </div>
+              <div class="stat-card-desc" style="font-size: 0.78rem; line-height: 1.35; color: var(--text-muted);">
+                Generates printable plain-language Patient Safety Summaries and high-density, reference-linked Clinician
+                Safety Dossiers.
+              </div>
+            </div>
+          </div>
+
+          <div
+            style="display: flex; justify-content: space-between; width: 100%; font-size: 0.8rem; color: var(--text-muted); margin-top: 15px;">
+            <span>🛡️ <strong>Engineered Safety System</strong>: Decoupled, asynchronous pipelines guaranteeing
+              reliability and sub-second alert delivery.</span>
+            <a href="file:///D:/neww/Medgaudian_AI/backend/services/risk_engine.py" class="code-ref-badge"
+              style="margin: 0; padding: 4px 10px;">
+              📂 View: backend/services/ (Core Risk & Ingestion Engines)
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 8: GLOBAL IMPACT (SDG ALIGNMENT) -->
+      <section class="slide" data-topic="Global Impact">
+        <h2 class="slide-title">Global Impact: <span class="accent">Sustainable Development Goals (SDG)</span></h2>
+        <div class="slide-content grid-2col" style="align-items: center;">
+          <div style="display: flex; flex-direction: column; justify-content: center;">
+            <div
+              style="background: #4C9F38; color: #ffffff; padding: 20px; border-radius: 16px; box-shadow: 0 8px 24px rgba(76,159,56,0.15); display: flex; align-items: center; gap: 16px; margin-bottom: 20px;">
+              <div style="font-size: 3rem; font-weight: 800; font-family: var(--font-title); line-height: 1;">3</div>
+              <div>
+                <strong
+                  style="font-size: 1.15rem; font-family: var(--font-title); display: block; margin-bottom: 2px;">SDG
+                  Goal 3</strong>
+                <span style="font-size: 0.95rem; font-weight: 500; display: block;">Good Health and Well-being</span>
+              </div>
+            </div>
+
+            <p style="font-size: 0.95rem; line-height: 1.5; color: var(--text-muted); margin-bottom: 12px;">
+              MedGuardian AI is architected to actively support the United Nations Sustainable Development Goals,
+              driving advancements in patient care safety and pharmaceutical auditing.
+            </p>
+
+            <div class="highlight-card success" style="padding: 14px 18px; margin: 0;">
+              <strong style="color: var(--success); display: block; margin-bottom: 4px; font-size: 0.9rem;">Global
+                Patient Safety Call</strong>
+              <p style="font-size: 0.82rem; margin-bottom: 0; line-height: 1.4; color: var(--text-muted);">
+                By deploying automated, continuous surveillance of medication regimens, the platform directly acts on
+                the WHO Global Patient Safety Challenge to reduce medication errors by 50% globally.
+              </p>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <div class="analogy-title right"
+              style="color: #4C9F38; border-color: rgba(76,159,56,0.15); background: rgba(76,159,56,0.02);">🎯 Targeted
+              SDG Indicators</div>
+
+            <div
+              style="background: #fafafa; border-left: 4px solid #4C9F38; padding: 12px 16px; border-radius: 0 12px 12px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); border-right: 1px solid var(--border);">
+              <strong style="font-size: 0.9rem; color: var(--text-main); display: block; margin-bottom: 3px;">Indicator
+                3.8: Access to Safe & Effective Medicines</strong>
+              <span style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4; display: block;">Ensures that
+                essential pharmacotherapy is safe, preventing toxic overlaps and drug collisions in multi-condition
+                patients.</span>
+            </div>
+
+            <div
+              style="background: #fafafa; border-left: 4px solid #4C9F38; padding: 12px 16px; border-radius: 0 12px 12px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); border-right: 1px solid var(--border);">
+              <strong style="font-size: 0.9rem; color: var(--text-main); display: block; margin-bottom: 3px;">Indicator
+                3.d: Early Warning Health Risk Portals</strong>
+              <span style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4; display: block;">Provides
+                real-time clinical decision support (CDSS) alerts, strengthening early-warning systems for patient
+                safety risk reduction.</span>
+            </div>
+
+            <div
+              style="background: #fafafa; border-left: 4px solid #00689D; padding: 12px 16px; border-radius: 0 12px 12px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); border-right: 1px solid var(--border);">
+              <strong style="font-size: 0.9rem; color: var(--text-main); display: block; margin-bottom: 3px;">SDG Goal
+                9: Clinical Infrastructure Innovation</strong>
+              <span style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4; display: block;">Upgrades
+                medical software infrastructures with continuous medication safety twins, creating resilient, scalable
+                decision-support protocols.</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 9: SUMMARY & FUTURE ROADMAP -->
+      <section class="slide" data-topic="Future Roadmap">
+        <h2 class="slide-title">Summary & <span class="accent">Future Roadmap</span></h2>
+        <div class="slide-content grid-2col">
+          <div>
+            <div class="analogy-title">🏆 Key Accomplishments</div>
+            <ul class="styled-list">
+              <li><strong>Continuous Validation:</strong> Replaced manual, point-in-time checks with event-driven
+                medication monitoring.</li>
+              <li><strong>Engineered Integrity:</strong> Implemented schema-enforced OCR, guidelines-grounded RAG, and
+                local safety rules fallbacks.</li>
+              <li><strong>Optimized Performance:</strong> Redis-backed debouncing prevents thread saturation during
+                concurrent profile modifications.</li>
+              <li><strong>Real-Time Delivery:</strong> Decoupled UI updates from alerts using lightweight Server-Sent
+                Events (SSE).</li>
+            </ul>
+          </div>
+
+          <div>
+            <div class="analogy-title right">🚀 Future Iterations</div>
+            <ul class="styled-list">
+              <li><strong>Standard Health API Sync (FHIR):</strong> Enable the Digital Twin to sync directly with
+                hospital Electronic Health Record (EHR) systems via clinical REST protocols.</li>
+              <li><strong>Edge AI Visual Processing:</strong> Integrate local OCR (`paddleocr`) to run image extractions
+                entirely offline without API call overheads.</li>
+              <li><strong>Wearable Telemetry Fusion:</strong> Feed real-time blood pressure, heart rate, and temperature
+                sensor data directly into the risk evaluation pipeline.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Bottom Navigation Controls -->
+    <footer class="deck-footer">
+      <div class="progress-container">
+        <div class="progress-bar" id="progress-bar"></div>
+      </div>
+
+      <div class="nav-controls">
+        <button class="btn-nav" id="btn-prev" disabled>
+          ← Prev
+        </button>
+        <span class="slide-indicator" id="slide-num">1 / 9</span>
+        <button class="btn-nav" id="btn-next">
+          Next →
+        </button>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- JavaScript Presentation Logic -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const slides = document.querySelectorAll('.slide');
+      const prevBtn = document.getElementById('btn-prev');
+      const nextBtn = document.getElementById('btn-next');
+      const slideIndicator = document.getElementById('slide-num');
+      const progressBar = document.getElementById('progress-bar');
+      const topicBadge = document.getElementById('slide-topic-badge');
+
+      let currentSlide = 0;
+      const totalSlides = slides.length;
+
+      // Update slide positions and metadata
+      function updateSlides() {
+        slides.forEach((slide, index) => {
+          slide.classList.remove('active');
+          if (index === currentSlide) {
+            slide.classList.add('active');
+
+            // Update topic badge
+            const topic = slide.getAttribute('data-topic') || 'Overview';
+            topicBadge.textContent = topic;
+          }
+        });
+
+        // Toggle buttons state
+        prevBtn.disabled = currentSlide === 0;
+        nextBtn.disabled = currentSlide === totalSlides - 1;
+
+        // Update progress indicators
+        slideIndicator.textContent = `${currentSlide + 1} / ${totalSlides}`;
+        const progressPercentage = ((currentSlide + 1) / totalSlides) * 100;
+        progressBar.style.width = `${progressPercentage}%`;
+      }
+
+      // Action Handlers
+      function nextSlide() {
+        if (currentSlide < totalSlides - 1) {
+          currentSlide++;
+          updateSlides();
+        }
+      }
+
+      function prevSlide() {
+        if (currentSlide > 0) {
+          currentSlide--;
+          updateSlides();
+        }
+      }
+
+      // Event Listeners
+      nextBtn.addEventListener('click', nextSlide);
+      prevBtn.addEventListener('click', prevSlide);
+
+      // Keyboard Controls
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'Enter') {
+          e.preventDefault();
+          nextSlide();
+        } else if (e.key === 'ArrowLeft' || e.key === 'Backspace') {
+          e.preventDefault();
+          prevSlide();
+        }
+      });
+
+      // Initialize layout
+      updateSlides();
+    });
+  </script>
+</body>
+
+</html>

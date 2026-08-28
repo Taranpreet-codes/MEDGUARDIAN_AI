@@ -1,0 +1,12 @@
+{
+  "evaluation_date": "2026-08-06T13:30:16.323241",
+  "total_cases": 50,
+  "accuracy": 24.489795918367346,
+  "precision_macro": 39.3939393939394,
+  "recall_macro": 39.13043478260869,
+  "f1_score_macro": 20.1329534662868,
+  "specificity_average": 77.24232887490166,
+  "balanced_accuracy": 53.29507748092909,
+  "roc_auc": NaN,
+  "average_latency_ms": 4486.022395913356
+}

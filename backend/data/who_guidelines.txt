@@ -1,0 +1,12 @@
+WHO CLINICAL HYPERTENSION GUIDELINE (2025)
+Lisinopril is an ACE inhibitor indicated for the treatment of hypertension.
+Lisinopril is strictly contraindicated in pregnancy. Clinical warnings state that exposure to ACE inhibitors during the second and third trimesters is associated with fetal and neonatal injury, including hypotension, neonatal skull hypoplasia, anuria, reversible or irreversible renal failure, and death. If pregnancy is detected, Lisinopril must be discontinued immediately.
+
+DRUG-DRUG INTERACTION WARNING: LISINOPRIL AND SPIRONOLACTONE
+Concomitant administration of Lisinopril and Spironolactone or other potassium-sparing diuretics may result in severe hyperkalemia (high blood potassium levels). Serum potassium levels must be monitored closely in these patients.
+
+NSAID RENAL WARNING: LISINOPRIL AND IBUPROFEN
+Concomitant use of NSAIDs like Ibuprofen with ACE inhibitors like Lisinopril may result in deterioration of renal function, including possible acute renal failure, especially in patients who are elderly, volume-depleted, or have compromised renal function (low eGFR). The antihypertensive effect of Lisinopril may also be decreased.
+
+ALLERGY CONTRAINDICATION: PENICILLINS & AMOXICILLIN
+Amoxicillin is a beta-lactam antibiotic. It is strictly contraindicated in patients with a history of allergic reactions to penicillin or other beta-lactams. Anaphylaxis and severe skin reactions can occur.

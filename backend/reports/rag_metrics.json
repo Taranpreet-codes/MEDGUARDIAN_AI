@@ -1,0 +1,205 @@
+{
+  "evaluation_date": "2026-08-06T13:16:16.128645",
+  "k": 5,
+  "metrics": {
+    "top_k_accuracy": 10.0,
+    "precision_at_k": 10.0,
+    "recall_at_k": 25.0,
+    "mrr": 0.1,
+    "ndcg": 0.18078394317246163,
+    "avg_retrieval_time_ms": 3592.5914399907924
+  },
+  "queries": [
+    {
+      "query": "Lisinopril pregnancy guidelines",
+      "expected_sources": [
+        "who_guidelines.txt",
+        "who_patient_safety_factsheet.txt"
+      ],
+      "retrieved_sources": [
+        "who_patient_safety_factsheet.txt",
+        "who_patient_safety_factsheet.txt",
+        "who_patient_safety_factsheet.txt",
+        "who_patient_safety_factsheet.txt",
+        "who_patient_safety_factsheet.txt"
+      ],
+      "hit": true,
+      "precision": 1.0,
+      "recall": 2.5,
+      "mrr": 1.0,
+      "ndcg": 1.8078394317246163,
+      "latency_ms": 3945.826100069098
+    },
+    {
+      "query": "Spironolactone hyperkalemia risk",
+      "expected_sources": [
+        "who_guidelines.txt"
+      ],
+      "retrieved_sources": [
+        "who_patient_safety_factsheet.txt",
+        "who_patient_safety_factsheet.txt",
+        "who_patient_safety_factsheet.txt",
+        "who_patient_safety_factsheet.txt",
+        "who_patient_safety_factsheet.txt"
+      ],
+      "hit": false,
+      "precision": 0.0,
+      "recall": 0.0,
+      "mrr": 0.0,
+      "ndcg": 0.0,
+      "latency_ms": 3450.0340999802575
+    },
+    {
+      "query": "NSAID kidney impairment warnings",
+      "expected_sources": [
+        "who_guidelines.txt"
+      ],
+      "retrieved_sources": [
+        "drug_ibuprofen.txt",
+        "drug_ibuprofen.txt",
+        "who_patient_safety_factsheet.txt",
+        "who_patient_safety_factsheet.txt",
+        "who_patient_safety_factsheet.txt"
+      ],
+      "hit": false,
+      "precision": 0.0,
+      "recall": 0.0,
+      "mrr": 0.0,
+      "ndcg": 0.0,
+      "latency_ms": 3337.17329998035
+    },
+    {
+      "query": "Metformin lactic acidosis contraindications",
+      "expected_sources": [
+        "who_guidelines.txt"
+      ],
+      "retrieved_sources": [
+        "who_patient_safety_factsheet.txt",
+        "who_patient_safety_factsheet.txt",
+        "who_patient_safety_factsheet.txt",
+        "who_patient_safety_factsheet.txt",
+        "who_patient_safety_factsheet.txt"
+      ],
+      "hit": false,
+      "precision": 0.0,
+      "recall": 0.0,
+      "mrr": 0.0,
+      "ndcg": 0.0,
+      "latency_ms": 3331.2040000455454
+    },
+    {
+      "query": "Amoxicillin penicillin allergy cross-reactivity",
+      "expected_sources": [
+        "who_guidelines.txt"
+      ],
+      "retrieved_sources": [
+        "who_patient_safety_factsheet.txt",
+        "who_patient_safety_factsheet.txt",
+        "who_patient_safety_factsheet.txt",
+        "who_patient_safety_factsheet.txt",
+        "who_patient_safety_factsheet.txt"
+      ],
+      "hit": false,
+      "precision": 0.0,
+      "recall": 0.0,
+      "mrr": 0.0,
+      "ndcg": 0.0,
+      "latency_ms": 3690.0656999787316
+    },
+    {
+      "query": "Drug-drug interaction metoprolol fluoxetine",
+      "expected_sources": [
+        "who_guidelines.txt"
+      ],
+      "retrieved_sources": [
+        "who_patient_safety_factsheet.txt",
+        "who_patient_safety_factsheet.txt",
+        "who_patient_safety_factsheet.txt",
+        "who_patient_safety_factsheet.txt",
+        "who_patient_safety_factsheet.txt"
+      ],
+      "hit": false,
+      "precision": 0.0,
+      "recall": 0.0,
+      "mrr": 0.0,
+      "ndcg": 0.0,
+      "latency_ms": 3993.5696000466123
+    },
+    {
+      "query": "Beers criteria zolpidem elderly",
+      "expected_sources": [
+        "who_guidelines.txt"
+      ],
+      "retrieved_sources": [
+        "drug_ibuprofen.txt",
+        "who_patient_safety_factsheet.txt",
+        "who_patient_safety_factsheet.txt",
+        "who_patient_safety_factsheet.txt",
+        "who_patient_safety_factsheet.txt"
+      ],
+      "hit": false,
+      "precision": 0.0,
+      "recall": 0.0,
+      "mrr": 0.0,
+      "ndcg": 0.0,
+      "latency_ms": 3305.4453999502584
+    },
+    {
+      "query": "Amiodarone azithromycin QT prolongation",
+      "expected_sources": [
+        "who_guidelines.txt"
+      ],
+      "retrieved_sources": [
+        "who_patient_safety_factsheet.txt",
+        "who_patient_safety_factsheet.txt",
+        "who_patient_safety_factsheet.txt",
+        "who_patient_safety_factsheet.txt",
+        "who_patient_safety_factsheet.txt"
+      ],
+      "hit": false,
+      "precision": 0.0,
+      "recall": 0.0,
+      "mrr": 0.0,
+      "ndcg": 0.0,
+      "latency_ms": 3863.1691999034956
+    },
+    {
+      "query": "Warfarin pregnancy contraindications",
+      "expected_sources": [
+        "who_guidelines.txt"
+      ],
+      "retrieved_sources": [
+        "who_patient_safety_factsheet.txt",
+        "who_patient_safety_factsheet.txt",
+        "who_patient_safety_factsheet.txt",
+        "who_patient_safety_factsheet.txt",
+        "who_patient_safety_factsheet.txt"
+      ],
+      "hit": false,
+      "precision": 0.0,
+      "recall": 0.0,
+      "mrr": 0.0,
+      "ndcg": 0.0,
+      "latency_ms": 3192.8231000201777
+    },
+    {
+      "query": "Acetaminophen hepatotoxicity liver cirrhosis",
+      "expected_sources": [
+        "who_guidelines.txt"
+      ],
+      "retrieved_sources": [
+        "drug_ibuprofen.txt",
+        "who_patient_safety_factsheet.txt",
+        "who_patient_safety_factsheet.txt",
+        "who_patient_safety_factsheet.txt",
+        "who_patient_safety_factsheet.txt"
+      ],
+      "hit": false,
+      "precision": 0.0,
+      "recall": 0.0,
+      "mrr": 0.0,
+      "ndcg": 0.0,
+      "latency_ms": 3816.6038999333978
+    }
+  ]
+}
