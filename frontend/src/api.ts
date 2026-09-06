@@ -1,330 +1,401 @@
-import type { PatientProfile, Medication, SafetyCheckResult, ChatMessage, SafetyHistoryPoint, SafetyAlert } from './types';
+import type { 
+  PatientProfile, 
+  Medication, 
+  SafetyCheckResult, 
+  ChatMessage, 
+  SafetyHistoryPoint, 
+  SafetyAlert,
+  ProactiveAlert
+} from './types';
 
 const API_BASE = '/api';
 
-export const mockPatient: PatientProfile = {
-  id: 1,
-  name: 'Eleanor Vance',
-  age: 67,
-  gender: 'Female',
-  weight_kg: 68.5,
-  creatinine_clearance: 42,
-  egfr: 45, // Stage 3a CKD
-  alt: 28,
-  ast: 31,
-  allergies: ['Penicillin', 'Sulfa Drugs'],
-  chronic_conditions: ['Stage 3 CKD', 'Hypertension', 'Atrial Fibrillation', 'Type 2 Diabetes'],
-  is_pregnant: false,
-  is_lactating: false,
-  blood_pressure: '138/84 mmHg'
-};
+// Token Management
+export const TOKEN_KEY = 'medguardian_jwt_token';
 
-export const mockMedications: Medication[] = [
-  {
-    id: 1,
-    name: 'Warfarin',
-    generic_name: 'Warfarin Sodium',
-    dosage: '5mg',
-    frequency: 'Once daily (Evening)',
-    route: 'Oral',
-    start_date: '2024-01-15',
-    prescribing_doctor: 'Dr. Sarah Jenkins (Cardiology)',
-    indication: 'Atrial Fibrillation / Stroke Prevention',
-    status: 'active'
-  },
-  {
-    id: 2,
-    name: 'Lisinopril',
-    generic_name: 'Lisinopril',
-    dosage: '10mg',
-    frequency: 'Once daily (Morning)',
-    route: 'Oral',
-    start_date: '2023-08-10',
-    prescribing_doctor: 'Dr. Marcus Reynolds (Nephrology)',
-    indication: 'Hypertension & Renal Protection',
-    status: 'active'
-  },
-  {
-    id: 3,
-    name: 'Metformin',
-    generic_name: 'Metformin Hydrochloride',
-    dosage: '500mg',
-    frequency: 'Twice daily with meals',
-    route: 'Oral',
-    start_date: '2022-11-04',
-    prescribing_doctor: 'Dr. Emily Chen (Endocrinology)',
-    indication: 'Type 2 Diabetes Mellitus',
-    status: 'active'
-  },
-  {
-    id: 4,
-    name: 'Atorvastatin',
-    generic_name: 'Atorvastatin Calcium',
-    dosage: '20mg',
-    frequency: 'Once daily at bedtime',
-    route: 'Oral',
-    start_date: '2023-04-12',
-    prescribing_doctor: 'Dr. Sarah Jenkins (Cardiology)',
-    indication: 'Hyperlipidemia',
-    status: 'active'
-  }
-];
+export function getToken(): string | null {
+  return localStorage.getItem(TOKEN_KEY);
+}
 
-export const mockSafetyCheck: SafetyCheckResult = {
-  overall_risk_score: 38,
-  overall_risk_level: 'Moderate',
-  summary: '2 moderate clinical alerts identified. Renal clearance monitoring advised given eGFR of 45 mL/min/1.73m².',
-  digital_twin_status: {
-    renal_load: 64,
-    hepatic_load: 32,
-    cardiac_risk: 41,
-    cns_depression_risk: 15
-  },
-  alerts: [
-    {
-      id: 'alt-1',
-      type: 'organ_impairment',
-      severity: 'moderate',
-      title: 'Metformin Dose Adjustment in Moderate Renal Impairment',
-      description: 'Patient eGFR is 45 mL/min/1.73m² (Stage 3a CKD). Maximum recommended Metformin daily dose is 1000mg to mitigate lactic acidosis risk.',
-      drugs_involved: ['Metformin'],
-      mechanism: 'Decreased renal clearance of metformin increases systemic accumulation.',
-      recommendation: 'Current dose (1000mg/day) is at upper safety limit. Monitor eGFR every 3-6 months. Discontinue if eGFR drops below 30 mL/min.',
-      evidence_source: 'KDIGO 2023 Clinical Practice Guideline for Diabetes Management in CKD',
-      evidence_score: 94
-    },
-    {
-      id: 'alt-2',
-      type: 'drug_drug',
-      severity: 'low',
-      title: 'Lisinopril + Metformin: Periodic Electrolyte & Renal Monitoring',
-      description: 'Concomitant ACE inhibitor therapy in diabetic kidney disease requires baseline potassium and creatinine surveillance.',
-      drugs_involved: ['Lisinopril', 'Metformin'],
-      recommendation: 'Check serum potassium and creatinine within 2 weeks of any dose titration.',
-      evidence_source: 'WHO Model Formulary 2023 / AHA Hypertension Guidelines',
-      evidence_score: 88
-    }
-  ],
-  recommendations: [
-    'Schedule routine comprehensive metabolic panel (CMP) within 30 days.',
-    'Maintain strict INR target of 2.0-3.0 for Warfarin anticoagulation therapy.',
-    'Counsel patient to avoid over-the-counter NSAIDs (Ibuprofen, Naproxen) which drastically heighten bleeding and acute kidney injury risk.'
-  ],
-  timestamp: new Date().toISOString()
-};
+export function setToken(token: string): void {
+  localStorage.setItem(TOKEN_KEY, token);
+}
 
-export const mockHistory: SafetyHistoryPoint[] = [
-  { date: 'May 2024', score: 18, event: 'Monotherapy: Lisinopril initiated', risk_level: 'Low' },
-  { date: 'Aug 2024', score: 25, event: 'Added Atorvastatin 20mg', risk_level: 'Low' },
-  { date: 'Nov 2024', score: 32, event: 'Added Metformin 500mg BID', risk_level: 'Moderate' },
-  { date: 'Jan 2025', score: 58, event: 'Warfarin initiated after AFib diagnosis', risk_level: 'Moderate' },
-  { date: 'Mar 2025', score: 78, event: 'High Risk Alert: Patient prescribed OTC NSAID (resolved)', risk_level: 'High' },
-  { date: 'Present', score: 38, event: 'Optimized regimen post-pharmacist review', risk_level: 'Moderate' }
-];
+export function removeToken(): void {
+  localStorage.removeItem(TOKEN_KEY);
+}
 
-export const mockAlertsStream: SafetyAlert[] = [
-  {
-    id: 'stream-1',
-    type: 'drug_drug',
-    severity: 'critical',
-    title: 'Simulated Warning: Avoid Co-administration of Ibuprofen with Warfarin',
-    description: 'NSAIDs displace warfarin from albumin and inhibit platelet aggregation, increasing gastrointestinal hemorrhage hazard by 4.2x.',
-    drugs_involved: ['Ibuprofen', 'Warfarin'],
-    recommendation: 'Use Acetaminophen (max 2g/day) or topical analgesic alternatives.',
-    evidence_source: 'FDA Drug Safety Communication / Cochrane Review'
-  },
-  {
-    id: 'stream-2',
-    type: 'allergy',
-    severity: 'high',
-    title: 'Allergy Warning: Penicillin Cross-Reactivity Risk',
-    description: 'Avoid Ampicillin, Amoxicillin, and 1st-generation Cephalosporins due to confirmed Type I hypersensitivity.',
-    drugs_involved: ['Penicillin'],
-    recommendation: 'Utilize Macrolides (Azithromycin) or Fluoroquinolones if antibiotic therapy is required.',
-    evidence_source: 'AAAAI Drug Allergy Practice Parameter'
-  }
-];
+export function getAuthHeaders(): Record<string, string> {
+  const token = getToken();
+  return token ? { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' } : { 'Content-Type': 'application/json' };
+}
 
-// Safety check simulation when adding a new medication
-export function evaluateNewMedication(newMedName: string, _currentMeds: Medication[], _patient: PatientProfile): SafetyCheckResult {
-  const normalized = newMedName.toLowerCase().trim();
-  const alerts: SafetyAlert[] = [...mockSafetyCheck.alerts];
-  let riskScore = mockSafetyCheck.overall_risk_score;
+// ─────────────────────────────────────────────────────────────────────────────
+// AUTHENTICATION APIs
+// ─────────────────────────────────────────────────────────────────────────────
 
-  if (normalized.includes('ibuprofen') || normalized.includes('advil') || normalized.includes('naproxen') || normalized.includes('aspirin') || normalized.includes('nsaid')) {
-    alerts.unshift({
-      id: `sim-${Date.now()}`,
-      type: 'drug_drug',
-      severity: 'critical',
-      title: `CRITICAL: Major Interaction between ${newMedName} and Warfarin`,
-      description: 'Severe hemorrhage hazard. NSAIDs inhibit COX-1 platelet aggregation and cause gastric mucosal erosion when combined with systemic anticoagulation.',
-      drugs_involved: [newMedName, 'Warfarin', 'Lisinopril'],
-      mechanism: 'Synergistic bleeding risk and triple whammy renal insult (ACEi + NSAID + baseline CKD).',
-      recommendation: 'CONTRAINDICATED. Switch to Acetaminophen or discuss non-pharmacological pain management.',
-      evidence_source: 'Clinical Pharmacology / American College of Cardiology Guidelines',
-      evidence_score: 99
-    });
-    riskScore = 86;
-  } else if (normalized.includes('amoxicillin') || normalized.includes('penicillin') || normalized.includes('ampicillin') || normalized.includes('augmentin')) {
-    alerts.unshift({
-      id: `sim-${Date.now()}`,
-      type: 'allergy',
-      severity: 'critical',
-      title: `ALLERGY CONTRAINDICATION: ${newMedName} violates Penicillin Allergy`,
-      description: `Patient Eleanor Vance has documented severe Penicillin allergy. Administering ${newMedName} presents high risk of anaphylaxis.`,
-      drugs_involved: [newMedName, 'Penicillin Allergy'],
-      recommendation: 'DO NOT DISPENSE. Select a non-beta-lactam alternative such as Azithromycin or Clindamycin.',
-      evidence_source: 'FDA Boxed Warning / Electronic Health Record Cross-Check',
-      evidence_score: 99
-    });
-    riskScore = 92;
-  } else if (normalized.includes('cipro') || normalized.includes('ciprofloxacin') || normalized.includes('bactrim')) {
-    alerts.unshift({
-      id: `sim-${Date.now()}`,
-      type: 'drug_drug',
-      severity: 'high',
-      title: `HIGH RISK: CYP1A2 / CYP2C9 Interaction with Warfarin`,
-      description: `${newMedName} potently inhibits Warfarin metabolism, causing acute INR spikes and severe spontaneous bleeding.`,
-      drugs_involved: [newMedName, 'Warfarin'],
-      recommendation: 'Reduce Warfarin dose by 30-50% with daily INR monitoring or substitute antibiotic.',
-      evidence_source: 'Chest Antithrombotic Therapy Guidelines',
-      evidence_score: 96
-    });
-    riskScore = 74;
-  } else {
-    alerts.unshift({
-      id: `sim-${Date.now()}`,
-      type: 'drug_drug',
-      severity: 'low',
-      title: `Compatibility Review for ${newMedName}`,
-      description: `No major absolute contraindications detected with current active regimen. Renal dosing should be verified for eGFR 45.`,
-      drugs_involved: [newMedName],
-      recommendation: 'Standard dosing appropriate. Monitor for common side effects.',
-      evidence_source: 'MedGuardian Knowledge Graph & RAG Core',
-      evidence_score: 85
-    });
-    riskScore = Math.min(100, riskScore + 5);
+export async function login(username: string, password: string): Promise<string> {
+  const res = await fetch(`${API_BASE}/auth/token/`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, password })
+  });
+
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.detail || errorData.error || 'Invalid username or password.');
   }
 
-  const riskLevel = riskScore >= 75 ? 'Critical' : riskScore >= 50 ? 'High' : riskScore >= 25 ? 'Moderate' : 'Low';
+  const data = await res.json();
+  setToken(data.access);
+  return data.access;
+}
+
+export async function register(username: string, password: string, email?: string): Promise<string> {
+  const res = await fetch(`${API_BASE}/auth/register/`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, password, email: email || '' })
+  });
+
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.error || errorData.detail || 'Registration failed.');
+  }
+
+  const data = await res.json();
+  setToken(data.access);
+  return data.access;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// PATIENT PROFILE & CABINET APIs
+// ─────────────────────────────────────────────────────────────────────────────
+
+export async function getPatientProfile(): Promise<PatientProfile> {
+  const res = await fetch(`${API_BASE}/patients/profile/me/`, {
+    headers: getAuthHeaders()
+  });
+
+  if (!res.ok) {
+    throw new Error('Failed to fetch patient profile.');
+  }
+
+  const data = await res.json();
+  return {
+    id: data.id,
+    username: data.username,
+    name: data.name || data.username || 'Patient',
+    age: data.age ?? 30,
+    gender: data.gender === 'F' ? 'Female' : data.gender === 'M' ? 'Male' : 'Other',
+    weight_kg: 68.5,
+    creatinine: data.creatinine ? Number(data.creatinine) : undefined,
+    egfr: data.egfr ? Number(data.egfr) : undefined,
+    allergies: Array.isArray(data.allergies) ? data.allergies : [],
+    chronic_conditions: Array.isArray(data.chronic_diseases) ? data.chronic_diseases : [],
+    chronic_diseases: Array.isArray(data.chronic_diseases) ? data.chronic_diseases : [],
+    is_pregnant: Boolean(data.pregnancy_status),
+    pregnancy_status: Boolean(data.pregnancy_status),
+  };
+}
+
+export async function updatePatientProfile(updated: Partial<PatientProfile>): Promise<PatientProfile> {
+  const payload: Record<string, any> = {};
+
+  if (updated.age !== undefined) payload.age = updated.age;
+  if (updated.gender !== undefined) payload.gender = updated.gender.startsWith('F') ? 'F' : updated.gender.startsWith('M') ? 'M' : 'O';
+  if (updated.is_pregnant !== undefined || updated.pregnancy_status !== undefined) {
+    payload.pregnancy_status = updated.is_pregnant ?? updated.pregnancy_status;
+  }
+  if (updated.chronic_conditions !== undefined || updated.chronic_diseases !== undefined) {
+    payload.chronic_diseases = updated.chronic_conditions || updated.chronic_diseases;
+  }
+  if (updated.allergies !== undefined) payload.allergies = updated.allergies;
+  if (updated.creatinine !== undefined) payload.creatinine = updated.creatinine;
+  if (updated.egfr !== undefined) payload.egfr = updated.egfr;
+
+  const res = await fetch(`${API_BASE}/patients/profile/me/`, {
+    method: 'PATCH',
+    headers: getAuthHeaders(),
+    body: JSON.stringify(payload)
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(JSON.stringify(err));
+  }
+
+  return await getPatientProfile();
+}
+
+export async function getMedications(): Promise<Medication[]> {
+  const res = await fetch(`${API_BASE}/patients/cabinet/`, {
+    headers: getAuthHeaders()
+  });
+
+  if (!res.ok) {
+    throw new Error('Failed to fetch medications.');
+  }
+
+  const rawList = await res.json();
+  return rawList.map((item: any) => ({
+    id: item.id,
+    name: item.name,
+    generic_name: item.generic_name || item.name,
+    dosage: item.dosage,
+    frequency: item.frequency,
+    route: item.route || 'Oral',
+    start_date: item.start_date,
+    end_date: item.end_date,
+    prescribing_doctor: item.prescribing_doctor || 'Attending Physician',
+    indication: item.indication || 'Prescribed Regimen',
+    status: item.is_active ? 'active' : 'discontinued',
+    is_active: item.is_active
+  }));
+}
+
+export async function addMedication(med: { name: string; dosage: string; frequency: string; start_date?: string }): Promise<Medication> {
+  const res = await fetch(`${API_BASE}/patients/cabinet/`, {
+    method: 'POST',
+    headers: getAuthHeaders(),
+    body: JSON.stringify({
+      name: med.name,
+      dosage: med.dosage || 'Standard Dose',
+      frequency: med.frequency || 'Once daily',
+      start_date: med.start_date || new Date().toISOString().split('T')[0],
+      is_active: true
+    })
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(JSON.stringify(err));
+  }
+
+  const item = await res.json();
+  return {
+    id: item.id,
+    name: item.name,
+    generic_name: item.generic_name || item.name,
+    dosage: item.dosage,
+    frequency: item.frequency,
+    route: 'Oral',
+    start_date: item.start_date,
+    prescribing_doctor: 'Attending Physician',
+    indication: 'Prescribed Regimen',
+    status: 'active',
+    is_active: true
+  };
+}
+
+export async function deleteMedication(id: number): Promise<void> {
+  const res = await fetch(`${API_BASE}/patients/cabinet/${id}/`, {
+    method: 'DELETE',
+    headers: getAuthHeaders()
+  });
+
+  if (!res.ok) {
+    throw new Error('Failed to delete medication.');
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SAFETY CHECK & DIGITAL TWIN APIs
+// ─────────────────────────────────────────────────────────────────────────────
+
+export async function getSafetyCheck(): Promise<SafetyCheckResult> {
+  const res = await fetch(`${API_BASE}/patients/profile/safety-check/`, {
+    headers: getAuthHeaders()
+  });
+
+  if (!res.ok) {
+    throw new Error('Failed to fetch safety check.');
+  }
+
+  const raw = await res.json();
+  const rawScore = raw.overall_risk_score || 'Safe';
+  
+  // Convert string score to numeric representation
+  const numericScore = typeof rawScore === 'number' ? rawScore : (
+    rawScore === 'Severe' ? 88 : rawScore === 'Moderate' ? 55 : rawScore === 'Low' ? 25 : 5
+  );
+
+  const riskLevel = typeof rawScore === 'string' ? rawScore : (
+    rawScore >= 75 ? 'Severe' : rawScore >= 50 ? 'Moderate' : rawScore >= 25 ? 'Low' : 'Safe'
+  );
+
+  const rawInteractions = raw.interactions || [];
+  const alerts: SafetyAlert[] = rawInteractions.map((inter: any, idx: number) => ({
+    id: `alert-${idx}-${Date.now()}`,
+    type: inter.severity === 'Severe' ? 'organ_impairment' : 'drug_drug',
+    severity: (inter.severity || 'moderate').toLowerCase() as any,
+    title: `${inter.severity || 'Moderate'} Alert: ${inter.drug_involved || 'Medication Concern'}`,
+    description: inter.description || 'Clinical safety alert identified.',
+    drugs_involved: inter.drug_involved ? inter.drug_involved.split(', ') : [],
+    recommendation: raw.clinician_notes || 'Review medication regimen with treating clinician.',
+    evidence_source: (raw.evidence_references && raw.evidence_references[0]) || 'Clinical RAG Knowledge Base',
+    evidence_score: 92
+  }));
+
+  // Digital Twin organ load estimates
+  const egfr = raw.egfr ?? 45;
+  const renalLoad = egfr < 30 ? 92 : egfr < 60 ? 68 : 28;
 
   return {
-    overall_risk_score: riskScore,
-    overall_risk_level: riskLevel,
-    summary: alerts[0].title,
+    overall_risk_score: numericScore,
+    overall_risk_level: riskLevel as any,
+    summary: raw.clinician_notes || (alerts.length > 0 ? alerts[0].title : 'No critical drug interactions flagged.'),
     digital_twin_status: {
-      renal_load: normalized.includes('ibuprofen') ? 89 : 68,
-      hepatic_load: 35,
-      cardiac_risk: normalized.includes('ibuprofen') ? 72 : 44,
+      renal_load: renalLoad,
+      hepatic_load: 34,
+      cardiac_risk: riskLevel === 'Severe' ? 75 : 38,
       cns_depression_risk: 15
     },
     alerts,
     recommendations: [
-      alerts[0].recommendation,
-      ...mockSafetyCheck.recommendations
+      raw.clinician_notes || 'Maintain routine monitoring of kidney and liver lab values.',
+      'Check serum electrolytes and creatinine before initiating new prescriptions.',
+      'Consult clinician or clinical pharmacist before taking over-the-counter NSAIDs.'
     ],
+    clinician_notes: raw.clinician_notes,
+    evidence_references: raw.evidence_references || [],
     timestamp: new Date().toISOString()
   };
 }
 
-export async function getPatientProfile(): Promise<PatientProfile> {
-  try {
-    const res = await fetch(`${API_BASE}/patients/profile/`);
-    if (res.ok) return await res.json();
-  } catch (_e) {
-    // fallback
+// ─────────────────────────────────────────────────────────────────────────────
+// SAFETY HISTORY & PROACTIVE ALERTS APIs
+// ─────────────────────────────────────────────────────────────────────────────
+
+export async function getSafetyHistory(): Promise<SafetyHistoryPoint[]> {
+  const res = await fetch(`${API_BASE}/patients/me/safety-history/`, {
+    headers: getAuthHeaders()
+  });
+
+  if (!res.ok) {
+    throw new Error('Failed to fetch safety history.');
   }
-  return mockPatient;
+
+  const data = await res.json();
+  const results = data.results || [];
+  
+  if (results.length === 0) {
+    return [
+      { date: 'Initial', score: 10, event: 'Baseline Profile Created', risk_level: 'Safe' }
+    ];
+  }
+
+  return results.map((item: any) => {
+    const scoreStr = item.risk_score || 'Safe';
+    const numericScore = scoreStr === 'Severe' ? 88 : scoreStr === 'Moderate' ? 55 : scoreStr === 'Low' ? 25 : 5;
+    const dateFormatted = new Date(item.created_at).toLocaleDateString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+    return {
+      id: item.id,
+      date: dateFormatted,
+      score: numericScore,
+      event: `Safety Assessment (${item.triggered_by || 'system'})`,
+      risk_level: scoreStr,
+      triggered_by: item.triggered_by
+    };
+  }).reverse(); // Chronological order
 }
 
-export async function getSafetyCheck(): Promise<SafetyCheckResult> {
-  try {
-    const res = await fetch(`${API_BASE}/patients/profile/safety-check/`);
-    if (res.ok) return await res.json();
-  } catch (_e) {
-    // fallback
+export async function getUnreadAlerts(): Promise<ProactiveAlert[]> {
+  const res = await fetch(`${API_BASE}/alerts/unread/`, {
+    headers: getAuthHeaders()
+  });
+
+  if (!res.ok) {
+    throw new Error('Failed to fetch unread alerts.');
   }
-  return mockSafetyCheck;
+
+  const data = await res.json();
+  return data.alerts || [];
 }
 
-export async function askClinicalAssistant(question: string, contextDrugs: string[]): Promise<ChatMessage> {
-  try {
-    const res = await fetch(`${API_BASE}/patients/profile/chat-ask/`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ question, context_drugs: contextDrugs })
-    });
-    if (res.ok) {
-      const data = await res.json();
-      return {
-        id: `msg-${Date.now()}`,
-        sender: 'assistant',
-        content: data.answer || data.response || data.content,
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        evidence_sources: data.sources || data.evidence
-      };
-    }
-  } catch (_e) {
-    // simulated RAG response
+export async function acknowledgeAlert(alertId: number | string): Promise<void> {
+  const res = await fetch(`${API_BASE}/alerts/${alertId}/acknowledge/`, {
+    method: 'POST',
+    headers: getAuthHeaders()
+  });
+
+  if (!res.ok) {
+    throw new Error('Failed to acknowledge alert.');
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// CLINICAL AI CHAT API
+// ─────────────────────────────────────────────────────────────────────────────
+
+export async function askClinicalAssistant(question: string, _contextDrugs: string[]): Promise<ChatMessage> {
+  const res = await fetch(`${API_BASE}/patients/profile/chat-ask/`, {
+    method: 'POST',
+    headers: getAuthHeaders(),
+    body: JSON.stringify({ query: question })
+  });
+
+  if (!res.ok) {
+    const errData = await res.json().catch(() => ({}));
+    throw new Error(errData.error || 'Failed to communicate with Clinical Assistant.');
   }
 
-  const q = question.toLowerCase();
-  let content = `Based on MedGuardian AI evidence retrieval across WHO guidelines and clinical monographs:`;
-  let sources = [
-    { title: 'WHO Essential Medicines Guidelines (2023)', confidence: 0.94, quote: 'Patients with renal clearance below 50 mL/min require tailored dosing.' },
-    { title: 'Goodman & Gilman\'s Pharmacological Basis of Therapeutics (14th Ed)', confidence: 0.91, quote: 'Warfarin metabolism is predominantly CYP2C9 and CYP3A4 mediated.' }
-  ];
-
-  if (q.includes('ibuprofen') || q.includes('advil') || q.includes('pain') || q.includes('nsaid')) {
-    content = `⚠️ **Critical Warning: Avoid Ibuprofen / NSAIDs**
-
-For Eleanor Vance, taking **Ibuprofen (Advil/Motrin)** is strictly **contraindicated** due to two compounding factors:
-
-1. **Warfarin Bleeding Risk (4.2x hazard increase)**: Ibuprofen displaces Warfarin from protein binding sites and causes platelet inhibition and mucosal erosion, drastically increasing the risk of serious GI and intracranial hemorrhage.
-2. **Triple Whammy Acute Kidney Injury (AKI)**: In combination with **Lisinopril (ACE inhibitor)** and pre-existing **Stage 3 CKD (eGFR 45)**, NSAIDs cause constriction of the afferent renal arterioles, which can induce sudden acute renal decompensation.
-
-**Recommended Safe Alternative:**
-• **Acetaminophen (Paracetamol)**: Up to 500mg-1000mg as needed (max 2g/24h) for mild-to-moderate pain.`;
-    sources = [
-      { title: 'ACC/AHA Anticoagulation Management Guidelines', confidence: 0.98, quote: 'NSAIDs should be avoided in patients receiving oral anticoagulation unless strictly unavoidable.' },
-      { title: 'KDIGO 2023 Clinical Practice Guideline for CKD', confidence: 0.96, quote: 'Avoid NSAIDs in patients with eGFR < 60 mL/min/1.73m² receiving ACE inhibitors.' }
-    ];
-  } else if (q.includes('metformin') || q.includes('kidney') || q.includes('egfr') || q.includes('renal')) {
-    content = `📊 **Metformin Renal Dosing Evaluation**
-
-• **Current eGFR**: 45 mL/min/1.73m² (Stage 3a Moderate CKD)
-• **Current Dose**: 500 mg twice daily (1,000 mg/day total)
-
-**Clinical Evaluation:**
-1. **Dose Adequacy**: According to FDA and ADA guidelines, Metformin is safe in patients with eGFR 45–59 mL/min up to a maximum dose of 1,000 mg daily. Eleanor's current regimen is at the optimal therapeutic ceiling.
-2. **Monitoring Strategy**: Schedule renal function panel (eGFR & serum creatinine) every 3 to 6 months.
-3. **Contrast Caution**: If scheduled for iodinated radiocontrast procedures, Metformin must be held at the time of procedure and for 48 hours post-procedure.`;
-    sources = [
-      { title: 'ADA Standards of Medical Care in Diabetes (2024)', confidence: 0.97, quote: 'Metformin can be safely continued if eGFR remains between 30 and 45 mL/min at maximum 1000mg daily.' }
-    ];
-  } else if (q.includes('alcohol') || q.includes('wine') || q.includes('drink')) {
-    content = `🍷 **Alcohol Interaction Advisory**
-
-• **Warfarin**: Acute alcohol intake reduces Warfarin metabolism, causing an elevation in INR and sudden bleeding hazard. Chronic heavy intake may paradoxically increase clearance.
-• **Metformin**: Alcohol consumption increases risk of lactic acidosis and hypoglycemia.
-• **Lisinopril**: Alcohol can accentuate hypotensive dizziness.
-
-**Recommendation**: Limit alcohol strictly or avoid entirely while on active Warfarin anticoagulation.`;
-  } else {
-    content = `MedGuardian AI analyzed Eleanor Vance's active profile (Warfarin 5mg, Lisinopril 10mg, Metformin 500mg BID, Atorvastatin 20mg, Stage 3 CKD, Penicillin allergy).
-
-Regarding your query: "${question}"
-
-• **Safety Status**: Current multi-drug regimen is stable with a moderate risk score (38/100).
-• **Precautions**: Avoid any OTC NSAIDs, monitor serum potassium and creatinine, and adhere to regular INR checks.
-• Please consult the primary care physician or nephrologist before introducing any supplements or herbal compounds.`;
-  }
+  const data = await res.json();
+  const citations = (data.citations || []).map((c: any) => ({
+    title: c.source || 'Clinical Guideline',
+    quote: c.snippet || '',
+    confidence: 0.95
+  }));
 
   return {
     id: `msg-${Date.now()}`,
     sender: 'assistant',
-    content,
+    content: data.response || 'No response returned.',
     timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-    evidence_sources: sources
+    evidence_sources: citations.length > 0 ? citations : [
+      { title: 'MedGuardian Evidence Vector Index', confidence: 0.90 }
+    ]
   };
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// PDF REPORTS APIs
+// ─────────────────────────────────────────────────────────────────────────────
+
+export async function downloadPatientReport(): Promise<void> {
+  const token = getToken();
+  const res = await fetch(`${API_BASE}/patients/profile/report-patient/`, {
+    headers: { 'Authorization': `Bearer ${token}` }
+  });
+
+  if (!res.ok) throw new Error('Failed to download Patient Safety Report PDF.');
+
+  const blob = await res.blob();
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `patient_safety_report.pdf`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  window.URL.revokeObjectURL(url);
+}
+
+export async function downloadClinicianReport(): Promise<void> {
+  const token = getToken();
+  const res = await fetch(`${API_BASE}/patients/profile/report-clinician/`, {
+    headers: { 'Authorization': `Bearer ${token}` }
+  });
+
+  if (!res.ok) throw new Error('Failed to download Clinician Safety Dossier PDF.');
+
+  const blob = await res.blob();
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `clinician_safety_dossier.pdf`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  window.URL.revokeObjectURL(url);
 }

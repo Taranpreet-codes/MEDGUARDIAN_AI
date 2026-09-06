@@ -44,6 +44,7 @@ urlpatterns = [
     path('api/patients/profile/report-patient/', PatientProfileViewSet.as_view({'get': 'report_patient'}), name='patient-report-patient'),
     path('api/patients/profile/report-clinician/', PatientProfileViewSet.as_view({'get': 'report_clinician'}), name='patient-report-clinician'),
     path('api/patients/profile/', PatientProfileViewSet.as_view({'get': 'me', 'put': 'me', 'patch': 'me'}), name='patient-profile'),
+    path('api/patients/profile/me/', PatientProfileViewSet.as_view({'get': 'me', 'put': 'me', 'patch': 'me'}), name='patient-profile-me'),
 
     # ── Stage 2: Safety History Timeline
     path('api/patients/me/safety-history/', PatientProfileViewSet.as_view({'get': 'safety_history'}), name='patient-safety-history'),

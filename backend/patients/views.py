@@ -113,8 +113,8 @@ class PatientProfileViewSet(viewsets.ModelViewSet):
                 "citations": mock_citations
             }, status=status.HTTP_200_OK)
 
-        api_key = os.environ.get("GEMINI_API_KEY")
-        if not api_key:
+        api_key = os.environ.get("GEMINI_API_KEY", "")
+        if not api_key or "your_gemini_api_key" in api_key.lower():
             return run_mock_fallback()
 
         try:

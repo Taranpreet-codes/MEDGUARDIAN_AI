@@ -3,12 +3,19 @@ from django.core.exceptions import ValidationError as DjangoValidationError
 from .models import PatientProfile, MedicationCabinet, SafetyAssessmentHistory, ProactiveAlert
 
 class PatientProfileSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source='user.username', read_only=True)
+    name = serializers.SerializerMethodField()
+
     class Meta:
         model = PatientProfile
         fields = [
-            'id', 'age', 'gender', 'pregnancy_status', 
+            'id', 'username', 'name', 'age', 'gender', 'pregnancy_status', 
             'chronic_diseases', 'allergies', 'creatinine', 'egfr'
         ]
+
+    def get_name(self, obj):
+        full = f"{obj.user.first_name} {obj.user.last_name}".strip()
+        return full if full else obj.user.username
 
     def validate(self, data):
         # Run clean logic on a temporary model instance to raise DjangoValidationError
@@ -31,11 +38,20 @@ class PatientProfileSerializer(serializers.ModelSerializer):
 
 
 class MedicationCabinetSerializer(serializers.ModelSerializer):
+    generic_name = serializers.SerializerMethodField()
+    status = serializers.SerializerMethodField()
+
     class Meta:
         model = MedicationCabinet
         fields = [
-            'id', 'name', 'dosage', 'frequency', 'start_date', 'end_date', 'is_active'
+            'id', 'name', 'generic_name', 'dosage', 'frequency', 'start_date', 'end_date', 'is_active', 'status'
         ]
+
+    def get_generic_name(self, obj):
+        return obj.name
+
+    def get_status(self, obj):
+        return 'active' if obj.is_active else 'discontinued'
 
     def validate(self, data):
         # Check start_date is before end_date if end_date is provided

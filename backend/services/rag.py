@@ -9,9 +9,8 @@ logger = logging.getLogger(__name__)
 
 def get_gemini_embedding(text: str) -> list[float]:
     """Generates embedding vector for input text using Gemini's gemini-embedding-001."""
-    api_key = os.environ.get("GEMINI_API_KEY")
-    if not api_key:
-        logger.warning("GEMINI_API_KEY not set. Returning dummy embedding.")
+    api_key = os.environ.get("GEMINI_API_KEY", "")
+    if not api_key or "your_gemini_api_key" in api_key.lower() or "placeholder" in api_key.lower():
         return [0.0] * 768
     try:
         from google.genai import types

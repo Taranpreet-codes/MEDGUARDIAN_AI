@@ -44,12 +44,12 @@ FALLBACK_INTERACTIONS = [
 
 class RiskEngine:
     def __init__(self):
-        self.api_key = os.environ.get("GEMINI_API_KEY")
-        if self.api_key:
+        self.api_key = os.environ.get("GEMINI_API_KEY", "")
+        if self.api_key and "your_gemini_api_key" not in self.api_key.lower():
             self.client = genai.Client(api_key=self.api_key)
         else:
             self.client = None
-            logger.warning("GEMINI_API_KEY not set. Using rule-based fallback and mock clinical evaluator.")
+            logger.warning("GEMINI_API_KEY not set or is placeholder. Using rule-based fallback and clinical evaluator.")
         self.rag_engine = RAGEngine()
 
     def resolve_rxcui(self, drug_name: str) -> str | None:

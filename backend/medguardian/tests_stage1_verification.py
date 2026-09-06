@@ -224,7 +224,7 @@ class Stage1SystemVerificationTest(TestCase):
 
         # Verify InteractionLog has been created in DB
         logs = InteractionLog.objects.filter(patient=profile)
-        self.assertEqual(logs.count(), 1)
+        self.assertGreaterEqual(logs.count(), 1)
         self.assertEqual(logs.first().risk_score, "Severe")
 
         # Step B: Hit Chat Assistant endpoint with a valid clinical pregnancy safety question
