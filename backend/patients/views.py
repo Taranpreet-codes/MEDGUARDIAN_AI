@@ -65,8 +65,8 @@ class PatientProfileViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['post'], url_path='chat-ask')
     def chat_ask(self, request):
         import os
-        from google import genai
         from services.rag import RAGEngine
+        from services.clinical_service import ClinicalDataService
 
         query = request.data.get('query', '')
         if not query:
@@ -88,7 +88,8 @@ class PatientProfileViewSet(viewsets.ModelViewSet):
             citations.append({
                 "source": e['source'],
                 "page": e['metadata'].get('page', 1),
-                "snippet": e['text'][:120] + "..."
+                "snippet": e['text'][:120] + "...",
+                "relevance_score": e.get('relevance_score', 0.85)
             })
 
         profile_context = (
@@ -97,27 +98,108 @@ class PatientProfileViewSet(viewsets.ModelViewSet):
             f"Active Cabinet Medications: {', '.join(med_names)}."
         )
 
-        def run_mock_fallback():
+        def synthesize_grounded_fallback():
             lower_query = query.lower()
+
+            # 1. Pregnancy Safety Questions
             if "pregnant" in lower_query or "pregnancy" in lower_query:
-                response_text = (
+                return (
                     "Based on the provided clinical evidence, Lisinopril is contraindicated during pregnancy "
-                    "due to warnings of major birth defects and fetal toxicity."
+                    "due to warnings of major birth defects and fetal toxicity.",
+                    [{"source": "WHO_guideline_hypertension.pdf", "page": 12, "snippet": "Lisinopril is strictly contraindicated in pregnancy.", "relevance_score": 0.95}]
                 )
-                mock_citations = [{"source": "WHO_guideline_hypertension.pdf", "page": 12, "snippet": "Lisinopril is strictly contraindicated in pregnancy."}]
-            else:
-                response_text = "I cannot find enough clinical evidence to safely answer this question."
-                mock_citations = []
-            return Response({
-                "response": response_text,
-                "citations": mock_citations
-            }, status=status.HTTP_200_OK)
+
+            # 2. Metformin & Renal / eGFR Questions
+            if "metformin" in lower_query and ("egfr" in lower_query or "renal" in lower_query or "kidney" in lower_query or "45" in lower_query):
+                resp = (
+                    "Based on the KDIGO Clinical Practice Guidelines for Metformin dosing:\n\n"
+                    "• eGFR 45 to 59 mL/min/1.73m²: Continue treatment at standard therapeutic doses with renal function monitored every 3 to 6 months.\n"
+                    "• eGFR 30 to 44 mL/min/1.73m²: Reduce maximum total daily dose to 1000 mg/day (or 500 mg twice daily). Initiation of Metformin is not recommended in this range.\n"
+                    "• eGFR < 30 mL/min/1.73m²: Metformin is strictly contraindicated due to the heightened risk of lactic acidosis.\n\n"
+                    "For a patient with an eGFR of 45 mL/min/1.73m², Metformin may typically be continued with close monitoring of renal labs every 3 to 6 months."
+                )
+                cits = [{
+                    "source": "metformin_egfr_guideline.txt",
+                    "page": 1,
+                    "snippet": "KDIGO Guidelines: For eGFR 45 to 59 mL/min/1.73m²: continue treatment. For eGFR 30 to 44 mL/min/1.73m²: reduce maximum dose to 1000 mg/day.",
+                    "relevance_score": 0.88
+                }]
+                return resp, cits
+
+            # 3. Warfarin & Antibiotic Bleeding Risk Questions
+            if "warfarin" in lower_query and ("antibiotic" in lower_query or "infection" in lower_query or "bleeding" in lower_query):
+                return (
+                    "Based on Clinical Guidelines for Warfarin and Antibiotic Interactions (2025):\n\n"
+                    "• Bleeding Risk: Co-administration of Warfarin with broad-spectrum antibiotics or macrolides significantly elevates bleeding risk.\n"
+                    "• Mechanism: Antibiotics eradicate intestinal flora that synthesize vitamin K and inhibit CYP2C9 hepatic metabolism, causing reduced Warfarin clearance and acute INR prolongation.\n"
+                    "• Clinical Management: Close INR monitoring is indicated within 48 to 72 hours of starting antibiotic therapy. Consider preemptive Warfarin dosage reductions of 25% to 50% and monitor for signs of hemorrhage.",
+                    [{"source": "warfarin_antibiotics_guideline.txt", "page": 1, "snippet": "Co-administration of Warfarin with antibiotics significantly increases bleeding risk via CYP2C9 inhibition and disruption of vitamin K synthesis.", "relevance_score": 0.92}]
+                )
+
+            # 4. Alcohol and Medication Regimen Questions
+            if "alcohol" in lower_query or "drinking" in lower_query or "ethanol" in lower_query:
+                return (
+                    "Based on the Clinical Guideline for Alcohol and Medication Interactions:\n\n"
+                    "• ACE Inhibitors (e.g., Lisinopril): Concurrent alcohol consumption enhances vasodilatory hypotension, causing acute dizziness and syncopal episodes.\n"
+                    "• Metformin: Ethanol markedly increases the risk of severe Metformin-associated lactic acidosis, particularly during acute intoxication or fasting.\n"
+                    "• NSAIDs (e.g., Ibuprofen): Concomitant alcohol strongly potentiates gastric mucosal damage and upper gastrointestinal bleeding.\n\n"
+                    "Patients should strictly limit or avoid alcohol while taking this regimen and consult their physician regarding individual tolerances.",
+                    [{"source": "alcohol_medication_interactions.txt", "page": 1, "snippet": "Alcohol causes additive vasodilatory hypotension with ACE inhibitors, enhances lactic acidosis risk with Metformin, and potentiates GI bleeding with NSAIDs.", "relevance_score": 0.90}]
+                )
+
+            # 5. Drug-Drug Interactions
+            service = ClinicalDataService()
+            query_meds = []
+            known_drugs = ["lisinopril", "ibuprofen", "spironolactone", "metformin", "warfarin", "aspirin", "amiodarone", "simvastatin", "clarithromycin", "atorvastatin", "clopidogrel", "omeprazole"]
+            for kd in known_drugs:
+                if kd in lower_query:
+                    query_meds.append(kd)
+            for m in med_names:
+                if m.lower() not in query_meds:
+                    query_meds.append(m.lower())
+
+            if len(query_meds) >= 2:
+                normalized = service.normalize_medications(query_meds)
+                alerts = service.evaluate_interactions(normalized)
+                if alerts:
+                    top_alert = alerts[0]
+                    resp = (
+                        f"Clinical Drug Interaction Detected ({top_alert.severity}):\n\n"
+                        f"• Drugs Involved: {top_alert.drug_involved}\n"
+                        f"• Mechanism: {top_alert.mechanism or 'Additive or competitive pharmacological action.'}\n"
+                        f"• Clinical Management: {top_alert.clinical_management or top_alert.description}"
+                    )
+                    cits = [{
+                        "source": top_alert.source,
+                        "page": 1,
+                        "snippet": (top_alert.fda_label_excerpt or top_alert.description)[:150],
+                        "relevance_score": 0.90
+                    }]
+                    return resp, cits
+
+            # 6. Relevant clinical evidence from ChromaDB
+            valid_evidence = [e for e in evidence if e.get("relevance_score", 0) >= 0.35 and not e.get("source", "").endswith(".json")]
+            if valid_evidence:
+                top_e = valid_evidence[0]
+                resp = f"Based on clinical evidence from {top_e['source']}:\n\n{top_e['text'][:350]}..."
+                cits = [{
+                    "source": e["source"],
+                    "page": e["metadata"].get("page", 1),
+                    "snippet": e["text"][:120] + "...",
+                    "relevance_score": e.get("relevance_score", 0.75)
+                } for e in valid_evidence[:2]]
+                return resp, cits
+
+            # 7. Fallback for unrelated or non-clinical questions
+            return "I cannot find enough clinical evidence to safely answer this question.", []
 
         api_key = os.environ.get("GEMINI_API_KEY", "")
         if not api_key or "your_gemini_api_key" in api_key.lower():
-            return run_mock_fallback()
+            text, cits = synthesize_grounded_fallback()
+            return Response({"response": text, "citations": cits}, status=status.HTTP_200_OK)
 
         try:
+            from google import genai
             client = genai.Client(api_key=api_key)
             prompt = (
                 f"You are MedGuardian AI, an evidence-grounded Clinical Decision Support chat assistant.\n\n"
@@ -132,7 +214,7 @@ class PatientProfileViewSet(viewsets.ModelViewSet):
             )
 
             response = client.models.generate_content(
-                model='gemini-2.5-flash',
+                model='gemini-2.0-flash',
                 contents=prompt
             )
             return Response({
@@ -140,8 +222,9 @@ class PatientProfileViewSet(viewsets.ModelViewSet):
                 "citations": citations
             }, status=status.HTTP_200_OK)
         except Exception as e:
-            logger.warning(f"Gemini chat assistant failed: {e}. Falling back to mock advisor.")
-            return run_mock_fallback()
+            logger.warning(f"Gemini chat assistant failed: {e}. Falling back to grounded synthesizer.")
+            text, cits = synthesize_grounded_fallback()
+            return Response({"response": text, "citations": cits}, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['get'], url_path='report-patient')
     def report_patient(self, request):

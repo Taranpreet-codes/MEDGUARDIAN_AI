@@ -344,7 +344,7 @@ export async function askClinicalAssistant(question: string, _contextDrugs: stri
   const citations = (data.citations || []).map((c: any) => ({
     title: c.source || 'Clinical Guideline',
     quote: c.snippet || '',
-    confidence: 0.95
+    confidence: c.relevance_score !== undefined ? c.relevance_score : 0.88
   }));
 
   return {

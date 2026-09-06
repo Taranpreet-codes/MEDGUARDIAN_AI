@@ -1,0 +1,114 @@
+[
+  {
+    "drug_a": "lisinopril",
+    "drug_b": "spironolactone",
+    "severity": "Severe",
+    "mechanism": "Dual blockade of the renin-angiotensin-aldosterone system (RAAS) and potassium retention by aldosterone antagonism.",
+    "clinical_management": "Concomitant use may result in severe, potentially fatal hyperkalemia. Monitor serum potassium and renal function closely; dose adjustment or discontinuation may be required.",
+    "source": "Clinical Guidelines / DDInter 2.0"
+  },
+  {
+    "drug_a": "lisinopril",
+    "drug_b": "ibuprofen",
+    "severity": "Moderate",
+    "mechanism": "NSAIDs inhibit renal prostaglandin synthesis, which decreases renal blood flow and blunts the antihypertensive efficacy of ACE inhibitors.",
+    "clinical_management": "NSAIDs may decrease the antihypertensive effect of Lisinopril and increase the risk of acute renal function deterioration. Monitor blood pressure and renal function.",
+    "source": "FDA Drug Label / DDInter 2.0"
+  },
+  {
+    "drug_a": "metformin",
+    "drug_b": "contrast",
+    "severity": "Moderate",
+    "mechanism": "Intravascular iodinated contrast media can lead to contrast-induced nephropathy, resulting in metformin accumulation and increased risk of lactic acidosis.",
+    "clinical_management": "Iodinated contrast media may cause acute renal failure; Metformin must be paused prior to or at the time of the procedure and withheld for 48 hours post-procedure until renal function is confirmed normal.",
+    "source": "ACR / FDA Drug Label"
+  },
+  {
+    "drug_a": "warfarin",
+    "drug_b": "aspirin",
+    "severity": "Severe",
+    "mechanism": "Synergistic inhibition of hemostasis: Warfarin inhibits vitamin K-dependent clotting factors while aspirin irreversibly inhibits platelet aggregation and causes gastric mucosal damage.",
+    "clinical_management": "Significantly increased risk of major gastrointestinal and systemic hemorrhage. Avoid concomitant use unless specifically indicated (e.g. mechanical heart valve plus recent coronary stent) with close INR and bleeding monitoring.",
+    "source": "ACC/AHA Guidelines / DDInter 2.0"
+  },
+  {
+    "drug_a": "warfarin",
+    "drug_b": "ibuprofen",
+    "severity": "Severe",
+    "mechanism": "NSAIDs displace warfarin from plasma proteins, inhibit platelet aggregation, and induce gastric erosion, compounding bleeding risks.",
+    "clinical_management": "Concurrent administration is generally avoided. If analgesia is required, consider acetaminophen with INR monitoring or topical agents.",
+    "source": "FDA Drug Label / DDInter 2.0"
+  },
+  {
+    "drug_a": "simvastatin",
+    "drug_b": "amiodarone",
+    "severity": "Severe",
+    "mechanism": "Amiodarone is a potent CYP3A4 inhibitor that markedly increases simvastatin plasma concentrations, elevating the risk of myopathy and rhabdomyolysis.",
+    "clinical_management": "Do not exceed simvastatin 20 mg daily with amiodarone, or switch to a statin not metabolized by CYP3A4 (e.g. pravastatin, rosuvastatin).",
+    "source": "FDA Drug Safety Communication / DDInter 2.0"
+  },
+  {
+    "drug_a": "fluoxetine",
+    "drug_b": "selegiline",
+    "severity": "Contraindicated",
+    "mechanism": "Combining SSRIs with MAO inhibitors produces massive serotonergic hyperstimulation resulting in potentially fatal Serotonin Syndrome.",
+    "clinical_management": "Strictly contraindicated. Allow at least 5 weeks washout after discontinuing fluoxetine before initiating an MAO inhibitor.",
+    "source": "FDA Boxed Warning / APA Guidelines"
+  },
+  {
+    "drug_a": "clopidogrel",
+    "drug_b": "omeprazole",
+    "severity": "Moderate",
+    "mechanism": "Omeprazole inhibits CYP2C19, significantly reducing the metabolic conversion of clopidogrel to its active antiplatelet metabolite.",
+    "clinical_management": "May decrease the antiplatelet efficacy of clopidogrel, increasing thrombotic event risk. Consider alternative acid-suppressing agents with less CYP2C19 inhibition such as pantoprazole.",
+    "source": "FDA Drug Safety Communication"
+  },
+  {
+    "drug_a": "digoxin",
+    "drug_b": "amiodarone",
+    "severity": "Severe",
+    "mechanism": "Amiodarone inhibits P-glycoprotein and renal tubular excretion of digoxin, approximately doubling digoxin serum concentrations.",
+    "clinical_management": "Reduce digoxin dosage by 30% to 50% upon initiating amiodarone. Monitor serum digoxin concentrations and ECG for digitalis toxicity.",
+    "source": "FDA Drug Label / DDInter 2.0"
+  },
+  {
+    "drug_a": "ciprofloxacin",
+    "drug_b": "ondansetron",
+    "severity": "Moderate",
+    "mechanism": "Additive cardiac electrophysiological effects leading to QTc interval prolongation and risk of Torsades de Pointes.",
+    "clinical_management": "Avoid in patients with congenital long QT syndrome or hypokalemia. Perform baseline and periodic ECG monitoring if concurrent therapy is unavoidable.",
+    "source": "CredibleMeds / FDA Drug Label"
+  },
+  {
+    "drug_a": "methotrexate",
+    "drug_b": "ibuprofen",
+    "severity": "Severe",
+    "mechanism": "NSAIDs decrease renal prostaglandin synthesis and inhibit tubular secretion of methotrexate, leading to elevated toxic methotrexate levels.",
+    "clinical_management": "Concomitant use may result in severe bone marrow suppression and gastrointestinal toxicity. Exercise extreme caution, monitor complete blood counts and renal function.",
+    "source": "FDA Boxed Warning / DDInter 2.0"
+  },
+  {
+    "drug_a": "atorvastatin",
+    "drug_b": "clarithromycin",
+    "severity": "Severe",
+    "mechanism": "Clarithromycin is a strong CYP3A4 inhibitor that markedly increases atorvastatin exposure, heightening rhabdomyolysis risk.",
+    "clinical_management": "Avoid combination or temporarily suspend atorvastatin during clarithromycin therapy, or substitute azithromycin.",
+    "source": "FDA Drug Label"
+  },
+  {
+    "drug_a": "potassium chloride",
+    "drug_b": "spironolactone",
+    "severity": "Severe",
+    "mechanism": "Additive hyperkalemic effect between potassium supplementation and potassium-sparing aldosterone antagonist.",
+    "clinical_management": "Potentially life-threatening hyperkalemia. Avoid potassium supplements unless severe hypokalemia is documented with frequent serum monitoring.",
+    "source": "FDA Drug Label / KDIGO"
+  },
+  {
+    "drug_a": "lisinopril",
+    "drug_b": "potassium chloride",
+    "severity": "Severe",
+    "mechanism": "ACE inhibitors reduce aldosterone production, leading to potassium retention that combines additively with potassium supplements.",
+    "clinical_management": "Risk of severe hyperkalemia. Concurrent potassium supplementation should be used with extreme caution and frequent serum potassium checks.",
+    "source": "FDA Drug Label"
+  }
+]

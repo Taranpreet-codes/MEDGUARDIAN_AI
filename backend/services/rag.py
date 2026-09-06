@@ -65,22 +65,34 @@ class RAGEngine:
                 matched_items = []
                 
                 for idx, doc in enumerate(documents):
+                    meta = metadatas[idx] if idx < len(metadatas) else {}
+                    source = meta.get("source", "Unknown")
+                    if source.endswith(".json"):
+                        continue
                     doc_lower = doc.lower()
                     score = sum(1 for w in query_words if w in doc_lower)
                     if score > 0:
-                        matched_items.append((score, idx, doc))
+                        matched_items.append((score, idx, doc, source, meta))
                 
                 matched_items.sort(key=lambda x: x[0], reverse=True)
                 
                 evidence_items = []
-                for score, idx, doc in matched_items[:limit]:
-                    meta = metadatas[idx] if idx < len(metadatas) else {}
+                seen_sources = set()
+                max_score = matched_items[0][0] if matched_items else 1
+                for score, idx, doc, source, meta in matched_items:
+                    if source in seen_sources:
+                        continue
+                    seen_sources.add(source)
+                    norm_score = round(min(0.95, 0.40 + 0.50 * (score / max(max_score, 1))), 2)
                     evidence_items.append({
                         "id": ids[idx] if idx < len(ids) else f"doc_{idx}",
                         "text": doc,
-                        "source": meta.get("source", "Unknown"),
-                        "metadata": meta
+                        "source": source,
+                        "metadata": meta,
+                        "relevance_score": norm_score
                     })
+                    if len(evidence_items) >= limit:
+                        break
                 return evidence_items
             except Exception as e:
                 logger.error(f"Local keyword search fallback failed: {e}")
@@ -89,23 +101,35 @@ class RAGEngine:
         try:
             results = self.collection.query(
                 query_embeddings=[query_vector],
-                n_results=limit
+                n_results=limit * 2
             )
 
             evidence_items = []
+            seen_sources = set()
             if results and 'documents' in results and results['documents']:
                 documents = results['documents'][0]
                 metadatas = results['metadatas'][0] if 'metadatas' in results else []
                 ids = results['ids'][0] if 'ids' in results else []
+                distances = results['distances'][0] if 'distances' in results else []
                 
                 for idx, doc in enumerate(documents):
                     meta = metadatas[idx] if idx < len(metadatas) else {}
+                    source = meta.get("source", "Unknown")
+                    if source.endswith(".json") or source in seen_sources:
+                        continue
+                    seen_sources.add(source)
+                    
+                    dist = distances[idx] if idx < len(distances) else 0.5
+                    rel_score = round(max(0.0, min(1.0, 1.0 - (dist / 2.0))), 2)
                     evidence_items.append({
                         "id": ids[idx] if idx < len(ids) else f"doc_{idx}",
                         "text": doc,
-                        "source": meta.get("source", "Unknown"),
-                        "metadata": meta
+                        "source": source,
+                        "metadata": meta,
+                        "relevance_score": rel_score
                     })
+                    if len(evidence_items) >= limit:
+                        break
             return evidence_items
         except Exception as e:
             logger.error(f"ChromaDB retrieval failed: {e}")
