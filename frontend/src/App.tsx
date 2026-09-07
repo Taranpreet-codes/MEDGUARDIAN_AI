@@ -80,6 +80,8 @@ export default function App() {
   const [proactiveAlerts, setProactiveAlerts] = useState<ProactiveAlert[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [errorMsg, setErrorMsg] = useState<string>('');
+  // Tracks whether the background safety evaluation is still running
+  const [safetyCheckLoading, setSafetyCheckLoading] = useState<boolean>(false);
 
   // Modals state
   const [showProfileModal, setShowProfileModal] = useState(false);
@@ -132,23 +134,29 @@ export default function App() {
   };
 
   // Load patient data from backend
+  // ─────────────────────────────────────────────────────────────────────────
+  // Two-phase load strategy:
+  //   Phase 1 (fast, ~1-2 s): profile + medications + history + alerts.
+  //              → Clears full-screen spinner so cabinet renders immediately.
+  //   Phase 2 (async, non-blocking): getSafetyCheck (may be slow on cold cache).
+  //              → Updates only the risk gauge; shows inline 'Analyzing…' pulse.
+  // ─────────────────────────────────────────────────────────────────────────
   const loadAllData = useCallback(async () => {
     if (!getToken()) return;
     setLoading(true);
     setErrorMsg('');
 
     try {
-      const [prof, meds, check, hist, alerts] = await Promise.all([
+      // ── Phase 1: fast calls — clear loading screen immediately ───────────
+      const [prof, meds, hist, alerts] = await Promise.all([
         getPatientProfile(),
         getMedications(),
-        getSafetyCheck(),
         getSafetyHistory(),
         getUnreadAlerts()
       ]);
 
       setPatient(prof);
       setMedications(meds);
-      setSafetyCheck(check);
       setSafetyHistory(hist);
       setProactiveAlerts(alerts);
 
@@ -180,8 +188,16 @@ export default function App() {
       console.error('Failed to load patient data:', err);
       setErrorMsg(err.message || 'Failed to sync with backend API.');
     } finally {
+      // Clear full-screen spinner as soon as Phase 1 completes
       setLoading(false);
     }
+
+    // ── Phase 2: safety evaluation — runs async, never blocks cabinet ────
+    setSafetyCheckLoading(true);
+    getSafetyCheck()
+      .then(check => setSafetyCheck(check))
+      .catch(err => console.error('Safety check failed:', err))
+      .finally(() => setSafetyCheckLoading(false));
   }, []);
 
   useEffect(() => {
@@ -537,7 +553,7 @@ export default function App() {
           </button>
 
           {/* Global Risk Badge */}
-          {safetyCheck && (
+          {safetyCheck ? (
             <div className={`px-3.5 py-1.5 rounded-xl border flex items-center gap-2 ${getRiskColorClasses(String(safetyCheck.overall_risk_level))}`}>
               {String(safetyCheck.overall_risk_level).toLowerCase() === 'severe' || String(safetyCheck.overall_risk_level).toLowerCase() === 'high' ? (
                 <ShieldAlert className="w-4 h-4 animate-pulse" />
@@ -548,7 +564,14 @@ export default function App() {
                 {safetyCheck.overall_risk_level} Risk ({safetyCheck.overall_risk_score}/100)
               </span>
             </div>
-          )}
+          ) : safetyCheckLoading ? (
+            <div className={`px-3.5 py-1.5 rounded-xl border flex items-center gap-2 ${
+              theme === 'dark' ? 'border-slate-700 bg-slate-800/60 text-slate-400' : 'border-slate-200 bg-slate-100 text-slate-500'
+            }`}>
+              <RefreshCw className="w-4 h-4 animate-spin text-teal-500" />
+              <span className="text-xs font-semibold">Analyzing…</span>
+            </div>
+          ) : null}
 
           {/* User Signout Button */}
           <button
@@ -669,7 +692,7 @@ export default function App() {
           )}
 
           {/* TAB 1: EXECUTIVE DIGITAL TWIN SAFETY DASHBOARD */}
-          {activeTab === 'dashboard' && safetyCheck && (
+          {activeTab === 'dashboard' && (safetyCheck || safetyCheckLoading) && medications.length >= 0 && (
             <div className="space-y-6">
               
               {/* Executive Overview Stats Grid */}
@@ -678,7 +701,14 @@ export default function App() {
                 {/* Risk Score Dial Card */}
                 <div className="panel-surface p-4 rounded-2xl flex flex-col items-center justify-between">
                   <span className={`text-xs font-semibold ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>Cumulative Safety Risk</span>
-                  {renderRiskGauge(Number(safetyCheck.overall_risk_score), String(safetyCheck.overall_risk_level))}
+                  {safetyCheck ? (
+                    renderRiskGauge(Number(safetyCheck.overall_risk_score), String(safetyCheck.overall_risk_level))
+                  ) : (
+                    <div className="flex flex-col items-center justify-center py-4 gap-2">
+                      <RefreshCw className="w-6 h-6 animate-spin text-teal-500" />
+                      <span className={`text-[10px] font-semibold ${theme === 'dark' ? 'text-slate-500' : 'text-slate-400'}`}>Analyzing…</span>
+                    </div>
+                  )}
                 </div>
 
                 {/* Active Regimen Count */}
@@ -703,11 +733,17 @@ export default function App() {
                     <ShieldAlert className="w-4 h-4 text-amber-500" />
                   </div>
                   <div className="my-2">
-                    <span className="text-3xl font-extrabold tracking-tight font-mono">{safetyCheck.alerts.length}</span>
-                    <span className={`text-xs ml-2 font-medium ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>Flagged Alerts</span>
+                    {safetyCheck ? (
+                      <>
+                        <span className="text-3xl font-extrabold tracking-tight font-mono">{safetyCheck.alerts.length}</span>
+                        <span className={`text-xs ml-2 font-medium ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>Flagged Alerts</span>
+                      </>
+                    ) : (
+                      <span className={`text-xs font-semibold ${theme === 'dark' ? 'text-slate-500' : 'text-slate-400'} animate-pulse`}>Analyzing…</span>
+                    )}
                   </div>
                   <span className="text-[11px] text-amber-500 font-semibold">
-                    {safetyCheck.alerts.length > 0 ? 'Requires Clinical Review' : 'No Critical Concerns'}
+                    {safetyCheck ? (safetyCheck.alerts.length > 0 ? 'Requires Clinical Review' : 'No Critical Concerns') : '–'}
                   </span>
                 </div>
 
@@ -723,7 +759,9 @@ export default function App() {
                     </span>
                   </div>
                   <span className={`text-[11px] ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>
-                    Last sync: {new Date(safetyCheck.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    {safetyCheck
+                      ? `Last sync: ${new Date(safetyCheck.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
+                      : 'Evaluating…'}
                   </span>
                 </div>
               </div>
@@ -735,51 +773,59 @@ export default function App() {
                   Digital Twin Organ System Clearance & Burden
                 </h3>
 
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                  <div className="card-surface p-3.5 rounded-xl">
-                    <div className="flex justify-between items-center mb-1.5">
-                      <span className={`text-xs font-medium ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>Renal Clearance</span>
-                      <span className="text-xs font-mono font-bold text-amber-500">{safetyCheck.digital_twin_status.renal_load}%</span>
+                {safetyCheck ? (
+                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div className="card-surface p-3.5 rounded-xl">
+                      <div className="flex justify-between items-center mb-1.5">
+                        <span className={`text-xs font-medium ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>Renal Clearance</span>
+                        <span className="text-xs font-mono font-bold text-amber-500">{safetyCheck.digital_twin_status.renal_load}%</span>
+                      </div>
+                      <div className={`w-full h-2 rounded-full overflow-hidden ${theme === 'dark' ? 'bg-slate-800' : 'bg-slate-200'}`}>
+                        <div className="bg-amber-500 h-full rounded-full transition-all duration-500" style={{ width: `${safetyCheck.digital_twin_status.renal_load}%` }} />
+                      </div>
+                      <span className={`text-[10px] mt-1.5 block ${theme === 'dark' ? 'text-slate-500' : 'text-slate-400'}`}>eGFR: {patient?.egfr ?? 'N/A'} mL/min</span>
                     </div>
-                    <div className={`w-full h-2 rounded-full overflow-hidden ${theme === 'dark' ? 'bg-slate-800' : 'bg-slate-200'}`}>
-                      <div className="bg-amber-500 h-full rounded-full transition-all duration-500" style={{ width: `${safetyCheck.digital_twin_status.renal_load}%` }} />
-                    </div>
-                    <span className={`text-[10px] mt-1.5 block ${theme === 'dark' ? 'text-slate-500' : 'text-slate-400'}`}>eGFR: {patient?.egfr ?? 'N/A'} mL/min</span>
-                  </div>
 
-                  <div className="card-surface p-3.5 rounded-xl">
-                    <div className="flex justify-between items-center mb-1.5">
-                      <span className={`text-xs font-medium ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>Hepatic Metabolism</span>
-                      <span className="text-xs font-mono font-bold text-teal-500">{safetyCheck.digital_twin_status.hepatic_load}%</span>
+                    <div className="card-surface p-3.5 rounded-xl">
+                      <div className="flex justify-between items-center mb-1.5">
+                        <span className={`text-xs font-medium ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>Hepatic Metabolism</span>
+                        <span className="text-xs font-mono font-bold text-teal-500">{safetyCheck.digital_twin_status.hepatic_load}%</span>
+                      </div>
+                      <div className={`w-full h-2 rounded-full overflow-hidden ${theme === 'dark' ? 'bg-slate-800' : 'bg-slate-200'}`}>
+                        <div className="bg-teal-500 h-full rounded-full transition-all duration-500" style={{ width: `${safetyCheck.digital_twin_status.hepatic_load}%` }} />
+                      </div>
+                      <span className={`text-[10px] mt-1.5 block ${theme === 'dark' ? 'text-slate-500' : 'text-slate-400'}`}>Normal Enzyme Profile</span>
                     </div>
-                    <div className={`w-full h-2 rounded-full overflow-hidden ${theme === 'dark' ? 'bg-slate-800' : 'bg-slate-200'}`}>
-                      <div className="bg-teal-500 h-full rounded-full transition-all duration-500" style={{ width: `${safetyCheck.digital_twin_status.hepatic_load}%` }} />
-                    </div>
-                    <span className={`text-[10px] mt-1.5 block ${theme === 'dark' ? 'text-slate-500' : 'text-slate-400'}`}>Normal Enzyme Profile</span>
-                  </div>
 
-                  <div className="card-surface p-3.5 rounded-xl">
-                    <div className="flex justify-between items-center mb-1.5">
-                      <span className={`text-xs font-medium ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>Cardiovascular Monitor</span>
-                      <span className="text-xs font-mono font-bold text-cyan-500">{safetyCheck.digital_twin_status.cardiac_risk}%</span>
+                    <div className="card-surface p-3.5 rounded-xl">
+                      <div className="flex justify-between items-center mb-1.5">
+                        <span className={`text-xs font-medium ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>Cardiovascular Monitor</span>
+                        <span className="text-xs font-mono font-bold text-cyan-500">{safetyCheck.digital_twin_status.cardiac_risk}%</span>
+                      </div>
+                      <div className={`w-full h-2 rounded-full overflow-hidden ${theme === 'dark' ? 'bg-slate-800' : 'bg-slate-200'}`}>
+                        <div className="bg-cyan-500 h-full rounded-full transition-all duration-500" style={{ width: `${safetyCheck.digital_twin_status.cardiac_risk}%` }} />
+                      </div>
+                      <span className={`text-[10px] mt-1.5 block ${theme === 'dark' ? 'text-slate-500' : 'text-slate-400'}`}>Cardiovascular Risk Profile</span>
                     </div>
-                    <div className={`w-full h-2 rounded-full overflow-hidden ${theme === 'dark' ? 'bg-slate-800' : 'bg-slate-200'}`}>
-                      <div className="bg-cyan-500 h-full rounded-full transition-all duration-500" style={{ width: `${safetyCheck.digital_twin_status.cardiac_risk}%` }} />
-                    </div>
-                    <span className={`text-[10px] mt-1.5 block ${theme === 'dark' ? 'text-slate-500' : 'text-slate-400'}`}>Cardiovascular Risk Profile</span>
-                  </div>
 
-                  <div className="card-surface p-3.5 rounded-xl">
-                    <div className="flex justify-between items-center mb-1.5">
-                      <span className={`text-xs font-medium ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>CNS Burden</span>
-                      <span className="text-xs font-mono font-bold text-emerald-500">{safetyCheck.digital_twin_status.cns_depression_risk}%</span>
+                    <div className="card-surface p-3.5 rounded-xl">
+                      <div className="flex justify-between items-center mb-1.5">
+                        <span className={`text-xs font-medium ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>CNS Burden</span>
+                        <span className="text-xs font-mono font-bold text-emerald-500">{safetyCheck.digital_twin_status.cns_depression_risk}%</span>
+                      </div>
+                      <div className={`w-full h-2 rounded-full overflow-hidden ${theme === 'dark' ? 'bg-slate-800' : 'bg-slate-200'}`}>
+                        <div className="bg-emerald-500 h-full rounded-full transition-all duration-500" style={{ width: `${safetyCheck.digital_twin_status.cns_depression_risk}%` }} />
+                      </div>
+                      <span className={`text-[10px] mt-1.5 block ${theme === 'dark' ? 'text-slate-500' : 'text-slate-400'}`}>Low Sedation Burden</span>
                     </div>
-                    <div className={`w-full h-2 rounded-full overflow-hidden ${theme === 'dark' ? 'bg-slate-800' : 'bg-slate-200'}`}>
-                      <div className="bg-emerald-500 h-full rounded-full transition-all duration-500" style={{ width: `${safetyCheck.digital_twin_status.cns_depression_risk}%` }} />
-                    </div>
-                    <span className={`text-[10px] mt-1.5 block ${theme === 'dark' ? 'text-slate-500' : 'text-slate-400'}`}>Low Sedation Burden</span>
                   </div>
-                </div>
+                ) : (
+                  <div className={`flex items-center justify-center gap-2 py-6 text-xs ${theme === 'dark' ? 'text-slate-500' : 'text-slate-400'}`}>
+                    <RefreshCw className="w-4 h-4 animate-spin text-teal-500" />
+                    Running organ system analysis…
+                  </div>
+                )}
+
               </div>
 
               {/* Active Clinical Safety Warnings & Alerts */}
@@ -787,12 +833,17 @@ export default function App() {
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="font-bold text-base flex items-center gap-2">
                     <ShieldAlert className="w-5 h-5 text-amber-500" />
-                    Active Clinical Safety Alerts ({safetyCheck.alerts.length})
+                    Active Clinical Safety Alerts ({safetyCheck?.alerts.length ?? '…'})
                   </h3>
                   <span className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>Evaluated via Backend Clinical Engine</span>
                 </div>
 
-                {safetyCheck.alerts.length === 0 ? (
+                {!safetyCheck ? (
+                  <div className={`flex items-center justify-center gap-2 py-6 text-xs ${theme === 'dark' ? 'text-slate-500' : 'text-slate-400'}`}>
+                    <RefreshCw className="w-4 h-4 animate-spin text-teal-500" />
+                    Running full clinical safety analysis…
+                  </div>
+                ) : safetyCheck.alerts.length === 0 ? (
                   <div className="p-6 text-center text-xs text-teal-500 bg-teal-500/10 border border-teal-500/30 rounded-xl font-medium">
                     <CheckCircle2 className="w-8 h-8 text-teal-500 mx-auto mb-2" />
                     No critical drug interactions or contraindications flagged for active regimen.
@@ -839,16 +890,23 @@ export default function App() {
                   <Sparkles className="w-4 h-4 text-teal-500" />
                   Actionable Clinical Directives
                 </h3>
-                <ul className="space-y-2 text-xs">
-                  {safetyCheck.recommendations.map((rec: string, i: number) => (
-                    <li key={i} className={`flex items-start gap-2.5 p-3 rounded-xl border card-surface`}>
-                      <span className="w-5 h-5 rounded-full bg-teal-500/10 text-teal-500 border border-teal-500/30 flex items-center justify-center text-[10px] font-bold flex-shrink-0">
-                        {i + 1}
-                      </span>
-                      <span className="leading-relaxed font-medium">{rec}</span>
-                    </li>
-                  ))}
-                </ul>
+                {safetyCheck ? (
+                  <ul className="space-y-2 text-xs">
+                    {safetyCheck.recommendations.map((rec: string, i: number) => (
+                      <li key={i} className={`flex items-start gap-2.5 p-3 rounded-xl border card-surface`}>
+                        <span className="w-5 h-5 rounded-full bg-teal-500/10 text-teal-500 border border-teal-500/30 flex items-center justify-center text-[10px] font-bold flex-shrink-0">
+                          {i + 1}
+                        </span>
+                        <span className="leading-relaxed font-medium">{rec}</span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <div className={`flex items-center gap-2 py-4 text-xs ${theme === 'dark' ? 'text-slate-500' : 'text-slate-400'}`}>
+                    <RefreshCw className="w-4 h-4 animate-spin text-teal-500" />
+                    Generating clinical directives…
+                  </div>
+                )}
               </div>
             </div>
           )}

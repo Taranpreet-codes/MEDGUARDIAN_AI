@@ -56,11 +56,70 @@ class PatientProfileViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['get'], url_path='safety-check')
     def safety_check(self, request):
+        import hashlib
+        import json as _json
+        from django.core.cache import cache as _cache
         from services.risk_engine import RiskEngine
+
         profile = self.get_object()
+
+        # ── Build a complete clinical fingerprint ────────────────────────────
+        # Every field consumed by evaluate_patient_safety must be included so
+        # that ANY clinically relevant change invalidates the cached result.
+        #
+        # Fields used by evaluate_patient_safety (clinical_service.py):
+        #   1. Active medications: name, dosage, frequency (drug-drug interactions,
+        #      renal dose checks, allergy matching, pregnancy contraindications)
+        #   2. profile.pregnancy_status  — pregnancy contraindication checks
+        #   3. profile.egfr              — renal function / dose adjustment rules
+        #   4. profile.creatinine        — complementary renal metric
+        #   5. profile.allergies         — allergy cross-matching
+        #   6. profile.age               — included for completeness / future rules
+        #   7. profile.gender            — pregnancy validation gate
+        #   8. profile.chronic_diseases  — used for guideline evidence queries
+
+        active_meds = list(
+            profile.medications
+            .filter(is_active=True)
+            .values('name', 'dosage', 'frequency')
+            .order_by('name')
+        )
+
+        fingerprint_payload = {
+            'meds': [(m['name'].lower().strip(), m['dosage'].lower().strip(), m['frequency'].lower().strip())
+                     for m in active_meds],
+            'pregnancy': bool(profile.pregnancy_status),
+            'egfr':       str(profile.egfr) if profile.egfr is not None else None,
+            'creatinine': str(profile.creatinine) if profile.creatinine is not None else None,
+            'allergies':  sorted(a.lower().strip() for a in (profile.allergies or []) if a.strip()),
+            'age':        int(profile.age) if profile.age else None,
+            'gender':     profile.gender,
+            'conditions': sorted(str(c).lower().strip() for c in (profile.chronic_diseases or []) if c),
+        }
+        raw_fingerprint = hashlib.sha256(
+            _json.dumps(fingerprint_payload, sort_keys=True).encode('utf-8')
+        ).hexdigest()[:32]
+
+        cache_key = f"mg:safety_result:{profile.pk}:{raw_fingerprint}"
+
+        # ── Cache hit: return immediately ────────────────────────────────────
+        cached = _cache.get(cache_key)
+        if cached is not None:
+            logger.debug(f"safety_check cache HIT for patient {profile.pk} (fp={raw_fingerprint[:8]}…)")
+            return Response(cached, status=status.HTTP_200_OK)
+
+        # ── Cache miss: run full evaluation ──────────────────────────────────
+        logger.debug(f"safety_check cache MISS for patient {profile.pk} (fp={raw_fingerprint[:8]}…) — evaluating")
         evaluator = RiskEngine()
         safety_report = evaluator.evaluate_patient_safety(profile)
+
+        # 120 s TTL — medication add/remove/profile-edit signals already set
+        # a dirty flag; the next fetch after a change will have a different
+        # fingerprint and therefore always be a cache miss regardless of TTL.
+        _cache.set(cache_key, safety_report, timeout=120)
+
         return Response(safety_report, status=status.HTTP_200_OK)
+
 
     @action(detail=False, methods=['post'], url_path='chat-ask')
     def chat_ask(self, request):
