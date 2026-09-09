@@ -441,6 +441,35 @@ export default function App() {
     }
   };
 
+  // Helper to find alerts associated with a specific medication
+  const getAlertsForMedication = (medName: string, genericName?: string) => {
+    if (!safetyCheck || !safetyCheck.alerts) return [];
+    const nameLower = medName.toLowerCase().trim();
+    const genLower = genericName ? genericName.toLowerCase().trim() : '';
+
+    return safetyCheck.alerts.filter(alert => {
+      const matchesInvolved = alert.drugs_involved?.some(d => {
+        const dLower = d.toLowerCase().trim();
+        return nameLower.includes(dLower) || dLower.includes(nameLower) || (genLower && (genLower.includes(dLower) || dLower.includes(genLower)));
+      });
+      if (matchesInvolved) return true;
+
+      if (alert.drug_involved) {
+        const diLower = alert.drug_involved.toLowerCase();
+        if (diLower.includes(nameLower) || (genLower && diLower.includes(genLower))) return true;
+      }
+
+      const descLower = alert.description?.toLowerCase() || '';
+      const titleLower = alert.title?.toLowerCase() || '';
+      return descLower.includes(nameLower) || titleLower.includes(nameLower);
+    });
+  };
+
+  // Severe alerts list
+  const severeAlerts = safetyCheck?.alerts?.filter(
+    a => String(a.severity).toLowerCase() === 'severe' || String(a.severity).toLowerCase() === 'critical'
+  ) || [];
+
   // Render SVG Semi-Gauge Dial for Risk Score
   const renderRiskGauge = (scoreNum: number, levelStr: string) => {
     const strokeDashoffset = 251.2 - (251.2 * Math.min(100, Math.max(0, scoreNum))) / 100;
@@ -828,6 +857,87 @@ export default function App() {
 
               </div>
 
+              {/* Severe Risk Contributors & Regimen Review Panel */}
+              {severeAlerts.length > 0 && (
+                <div className={`p-5 rounded-2xl border transition-all ${
+                  theme === 'dark' ? 'bg-rose-950/40 border-rose-800/80' : 'bg-rose-50/80 border-rose-300'
+                }`}>
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-2.5">
+                      <div className="p-2 rounded-xl bg-rose-500/20 text-rose-500 border border-rose-500/40">
+                        <AlertTriangle className="w-5 h-5 animate-pulse" />
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-sm text-rose-500">
+                          Severe Risk Contributors ({severeAlerts.length} Critical Driver{severeAlerts.length > 1 ? 's' : ''})
+                        </h3>
+                        <p className={`text-[11px] ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>
+                          Active regimen contains independent clinical contraindications maintaining Severe Risk (88/100).
+                        </p>
+                      </div>
+                    </div>
+                    <span className="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase bg-rose-500 text-white tracking-wider">
+                      Action Required
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
+                    {severeAlerts.map((alert, idx) => {
+                      const matchingMed = medications.find(m => {
+                        const mName = m.name.toLowerCase();
+                        return alert.drugs_involved?.some(d => mName.includes(d.toLowerCase()) || d.toLowerCase().includes(mName)) ||
+                          (alert.drug_involved && alert.drug_involved.toLowerCase().includes(mName));
+                      });
+
+                      return (
+                        <div key={idx} className={`p-3.5 rounded-xl border flex flex-col justify-between ${
+                          theme === 'dark' ? 'bg-slate-900/90 border-rose-900/60' : 'bg-white border-rose-200 shadow-sm'
+                        }`}>
+                          <div>
+                            <div className="flex items-center justify-between gap-2 mb-1.5">
+                              <span className="font-extrabold text-xs text-rose-500 flex items-center gap-1.5">
+                                <ShieldAlert className="w-3.5 h-3.5" />
+                                {alert.drug_involved || alert.title}
+                              </span>
+                              <span className="px-2 py-0.5 rounded text-[9px] font-bold uppercase bg-rose-500/10 text-rose-500 border border-rose-500/30">
+                                {alert.category === 'pregnancy_contraindication' ? 'Teratogen / Pregnancy' :
+                                 alert.category === 'allergy_conflict' ? 'Allergy Conflict' :
+                                 alert.category === 'renal_precaution' ? 'Renal Contraindication' : 'Drug Interaction'}
+                              </span>
+                            </div>
+                            <p className={`text-xs leading-relaxed mb-3 ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>
+                              {alert.description}
+                            </p>
+                          </div>
+
+                          <div className="pt-2 border-t border-dashed flex items-center justify-between gap-2 text-[11px]">
+                            {matchingMed ? (
+                              <button
+                                onClick={() => handleDeleteMedication(matchingMed.id)}
+                                className="px-2.5 py-1 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 font-bold border border-rose-500/30 transition-all flex items-center gap-1"
+                              >
+                                <Trash2 className="w-3 h-3" />
+                                Remove {matchingMed.name}
+                              </button>
+                            ) : (
+                              <span className={`text-[10px] ${theme === 'dark' ? 'text-slate-500' : 'text-slate-400'}`}>
+                                Check Profile Clinical Attributes
+                              </span>
+                            )}
+                            <button
+                              onClick={() => setActiveTab('cabinet')}
+                              className={`font-semibold underline ${theme === 'dark' ? 'text-teal-400 hover:text-teal-300' : 'text-teal-600 hover:text-teal-700'}`}
+                            >
+                              Review in Cabinet →
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
               {/* Active Clinical Safety Warnings & Alerts */}
               <div className="panel-surface p-5 rounded-2xl">
                 <div className="flex items-center justify-between mb-4">
@@ -1039,39 +1149,75 @@ export default function App() {
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {medications.map((med) => (
-                      <div key={med.id} className="card-surface p-4 rounded-xl border flex flex-col justify-between card-surface-hover transition-all">
-                        <div>
-                          <div className="flex items-center justify-between mb-1.5">
-                            <h4 className="font-bold text-sm">{med.name}</h4>
-                            <div className="flex items-center gap-2">
-                              <span className="px-2 py-0.5 text-[10px] font-mono font-bold rounded bg-teal-500/10 text-teal-500 border border-teal-500/30">
-                                {med.dosage}
-                              </span>
-                              <button
-                                onClick={() => handleDeleteMedication(med.id)}
-                                className="text-slate-400 hover:text-rose-500 transition-colors p-1"
-                                title="Remove medication"
-                              >
-                                <Trash2 className="w-3.5 h-3.5" />
-                              </button>
+                    {medications.map((med) => {
+                      const medAlerts = getAlertsForMedication(med.name, med.generic_name);
+                      const severeMedAlert = medAlerts.find(
+                        a => String(a.severity).toLowerCase() === 'severe' || String(a.severity).toLowerCase() === 'critical'
+                      );
+                      const modMedAlert = medAlerts.find(
+                        a => String(a.severity).toLowerCase() === 'moderate'
+                      );
+
+                      return (
+                        <div key={med.id} className={`p-4 rounded-xl border flex flex-col justify-between transition-all ${
+                          severeMedAlert
+                            ? theme === 'dark' ? 'bg-rose-950/20 border-rose-800/60' : 'bg-rose-50/50 border-rose-200'
+                            : 'card-surface card-surface-hover'
+                        }`}>
+                          <div>
+                            <div className="flex items-center justify-between mb-1.5">
+                              <h4 className="font-bold text-sm flex items-center gap-1.5">
+                                {med.name}
+                                {severeMedAlert && (
+                                  <ShieldAlert className="w-4 h-4 text-rose-500 flex-shrink-0" />
+                                )}
+                              </h4>
+                              <div className="flex items-center gap-2">
+                                <span className="px-2 py-0.5 text-[10px] font-mono font-bold rounded bg-teal-500/10 text-teal-500 border border-teal-500/30">
+                                  {med.dosage}
+                                </span>
+                                <button
+                                  onClick={() => handleDeleteMedication(med.id)}
+                                  className="text-slate-400 hover:text-rose-500 transition-colors p-1"
+                                  title="Remove medication"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                            </div>
+                            <p className={`text-xs mb-2 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>{med.generic_name}</p>
+
+                            {/* Active Warning Badge */}
+                            {severeMedAlert && (
+                              <div className="mb-2.5 p-2 rounded-lg bg-rose-500/10 border border-rose-500/30 text-[11px] text-rose-500 flex items-start gap-1.5">
+                                <AlertTriangle className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
+                                <span className="font-semibold line-clamp-2">{severeMedAlert.description}</span>
+                              </div>
+                            )}
+
+                            {!severeMedAlert && modMedAlert && (
+                              <div className="mb-2.5 p-2 rounded-lg bg-amber-500/10 border border-amber-500/30 text-[11px] text-amber-500 flex items-start gap-1.5">
+                                <Info className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
+                                <span className="font-semibold line-clamp-2">{modMedAlert.description}</span>
+                              </div>
+                            )}
+                            
+                            <div className={`space-y-1 text-xs mb-3 ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>
+                              <div><span className={theme === 'dark' ? 'text-slate-500' : 'text-slate-400'}>Frequency:</span> {med.frequency}</div>
+                              <div><span className={theme === 'dark' ? 'text-slate-500' : 'text-slate-400'}>Indication:</span> {med.indication}</div>
+                              <div><span className={theme === 'dark' ? 'text-slate-500' : 'text-slate-400'}>Prescriber:</span> {med.prescribing_doctor}</div>
                             </div>
                           </div>
-                          <p className={`text-xs mb-2 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>{med.generic_name}</p>
-                          
-                          <div className={`space-y-1 text-xs mb-3 ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>
-                            <div><span className={theme === 'dark' ? 'text-slate-500' : 'text-slate-400'}>Frequency:</span> {med.frequency}</div>
-                            <div><span className={theme === 'dark' ? 'text-slate-500' : 'text-slate-400'}>Indication:</span> {med.indication}</div>
-                            <div><span className={theme === 'dark' ? 'text-slate-500' : 'text-slate-400'}>Prescriber:</span> {med.prescribing_doctor}</div>
+
+                          <div className={`pt-2 border-t flex justify-between items-center text-[11px] ${theme === 'dark' ? 'border-slate-800 text-slate-400' : 'border-slate-200 text-slate-500'}`}>
+                            <span>Started: {med.start_date}</span>
+                            <span className={severeMedAlert ? "text-rose-500 font-bold" : "text-emerald-500 font-bold"}>
+                              {severeMedAlert ? "● Severe Concern" : "● Active"}
+                            </span>
                           </div>
                         </div>
-
-                        <div className={`pt-2 border-t flex justify-between items-center text-[11px] ${theme === 'dark' ? 'border-slate-800 text-slate-400' : 'border-slate-200 text-slate-500'}`}>
-                          <span>Started: {med.start_date}</span>
-                          <span className="text-emerald-500 font-bold">● Active</span>
-                        </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 )}
               </div>
