@@ -38,10 +38,13 @@ export interface SafetyAlert {
   id: string;
   type: 'drug_drug' | 'drug_disease' | 'allergy' | 'organ_impairment' | 'cumulative_toxicity' | 'special_population';
   severity: 'low' | 'moderate' | 'high' | 'critical' | 'low' | 'Severe' | 'Moderate' | 'Low' | 'Safe';
+  category?: string;
+  drug_involved?: string;
   title: string;
   description: string;
   drugs_involved: string[];
   mechanism?: string;
+  clinical_management?: string;
   recommendation: string;
   evidence_source?: string;
   evidence_score?: number;

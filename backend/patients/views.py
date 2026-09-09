@@ -81,12 +81,12 @@ class PatientProfileViewSet(viewsets.ModelViewSet):
         active_meds = list(
             profile.medications
             .filter(is_active=True)
-            .values('name', 'dosage', 'frequency')
-            .order_by('name')
+            .values('id', 'name', 'dosage', 'frequency')
+            .order_by('name', 'id')
         )
 
         fingerprint_payload = {
-            'meds': [(m['name'].lower().strip(), m['dosage'].lower().strip(), m['frequency'].lower().strip())
+            'meds': [(m['id'], m['name'].lower().strip(), m['dosage'].lower().strip(), m['frequency'].lower().strip())
                      for m in active_meds],
             'pregnancy': bool(profile.pregnancy_status),
             'egfr':       str(profile.egfr) if profile.egfr is not None else None,

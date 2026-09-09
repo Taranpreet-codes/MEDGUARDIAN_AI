@@ -225,17 +225,42 @@ export async function getSafetyCheck(): Promise<SafetyCheckResult> {
   );
 
   const rawInteractions = raw.interactions || [];
-  const alerts: SafetyAlert[] = rawInteractions.map((inter: any, idx: number) => ({
-    id: `alert-${idx}-${Date.now()}`,
-    type: inter.severity === 'Severe' ? 'organ_impairment' : 'drug_drug',
-    severity: (inter.severity || 'moderate').toLowerCase() as any,
-    title: `${inter.severity || 'Moderate'} Alert: ${inter.drug_involved || 'Medication Concern'}`,
-    description: inter.description || 'Clinical safety alert identified.',
-    drugs_involved: inter.drug_involved ? inter.drug_involved.split(', ') : [],
-    recommendation: raw.clinician_notes || 'Review medication regimen with treating clinician.',
-    evidence_source: (raw.evidence_references && raw.evidence_references[0]) || 'Clinical RAG Knowledge Base',
-    evidence_score: 92
-  }));
+  const alerts: SafetyAlert[] = rawInteractions.map((inter: any, idx: number) => {
+    const rawDrugStr = inter.drug_involved || '';
+    const parsedDrugs = rawDrugStr
+      ? rawDrugStr.split(/[,+]|\band\b/i).map((s: string) => s.trim()).filter(Boolean)
+      : [];
+
+    const category = inter.category || (
+      inter.description?.toLowerCase().includes('contraindicated in pregnancy') ? 'pregnancy_contraindication' :
+      inter.description?.toLowerCase().includes('allergic') || inter.description?.toLowerCase().includes('allergy') ? 'allergy_conflict' :
+      inter.description?.toLowerCase().includes('renal') || inter.description?.toLowerCase().includes('egfr') ? 'renal_precaution' :
+      'drug_interaction'
+    );
+
+    const severityStr = inter.severity || 'Moderate';
+    const categoryTitle = 
+      category === 'pregnancy_contraindication' ? 'Pregnancy Contraindication' :
+      category === 'allergy_conflict' ? 'Allergy Conflict' :
+      category === 'renal_precaution' ? 'Renal Precaution' :
+      'Drug Interaction';
+
+    return {
+      id: `alert-${idx}-${Date.now()}`,
+      type: (category === 'allergy_conflict' ? 'allergy' : category === 'renal_precaution' ? 'organ_impairment' : 'drug_drug') as any,
+      severity: severityStr.toLowerCase() as any,
+      category,
+      drug_involved: rawDrugStr,
+      title: `${severityStr} Alert: ${rawDrugStr || categoryTitle}`,
+      description: inter.description || 'Clinical safety alert identified.',
+      drugs_involved: parsedDrugs,
+      mechanism: inter.mechanism,
+      clinical_management: inter.clinical_management,
+      recommendation: inter.clinical_management || raw.clinician_notes || 'Review medication regimen with treating clinician.',
+      evidence_source: inter.source || (raw.evidence_references && raw.evidence_references[0]) || 'Clinical RAG Knowledge Base',
+      evidence_score: 92
+    };
+  });
 
   // Digital Twin organ load estimates
   const egfr = raw.egfr ?? 45;

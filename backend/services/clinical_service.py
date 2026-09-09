@@ -114,6 +114,7 @@ class ClinicalDataService:
         for alert in interaction_alerts:
             warnings.append({
                 "severity": alert.severity if alert.severity != "Contraindicated" else "Severe",
+                "category": "drug_interaction",
                 "description": alert.description,
                 "drug_involved": alert.drug_involved,
                 "mechanism": alert.mechanism,
@@ -140,6 +141,7 @@ class ClinicalDataService:
                     if contra_drug in gen:
                         warnings.append({
                             "severity": "Severe",
+                            "category": "pregnancy_contraindication",
                             "description": msg,
                             "drug_involved": gen.capitalize(),
                             "source": "FDA Boxed Warning / WHO Guidelines"
@@ -155,6 +157,7 @@ class ClinicalDataService:
                     if "metformin" in generic_names:
                         warnings.append({
                             "severity": "Severe",
+                            "category": "renal_precaution",
                             "description": f"Metformin is contraindicated in severe renal impairment (eGFR {egfr_val} < 30 mL/min/1.73m²) due to high risk of fatal lactic acidosis.",
                             "drug_involved": "Metformin",
                             "source": "FDA Drug Label / KDIGO 2023"
@@ -163,6 +166,7 @@ class ClinicalDataService:
                     if "spironolactone" in generic_names:
                         warnings.append({
                             "severity": "Severe",
+                            "category": "renal_precaution",
                             "description": f"Spironolactone is contraindicated in advanced kidney disease (eGFR {egfr_val} < 30) due to severe hyperkalemia risk.",
                             "drug_involved": "Spironolactone",
                             "source": "FDA Drug Label"
@@ -173,6 +177,7 @@ class ClinicalDataService:
                     if "metformin" in generic_names:
                         warnings.append({
                             "severity": "Moderate",
+                            "category": "renal_precaution",
                             "description": f"Renal dosage adjustment required: eGFR {egfr_val} mL/min. Maximum recommended Metformin dose is 1000 mg/day.",
                             "drug_involved": "Metformin",
                             "source": "FDA Drug Label / ADA Guidelines"
@@ -183,6 +188,7 @@ class ClinicalDataService:
                     if "ibuprofen" in generic_names:
                         warnings.append({
                             "severity": "Moderate",
+                            "category": "renal_precaution",
                             "description": f"Patient has renal impairment (eGFR {egfr_val}). NSAIDs like Ibuprofen should be avoided or minimized.",
                             "drug_involved": "Ibuprofen",
                             "source": "KDIGO Guidelines"
@@ -206,6 +212,7 @@ class ClinicalDataService:
                 if is_allergic:
                     warnings.append({
                         "severity": "Severe",
+                        "category": "allergy_conflict",
                         "description": f"Potential allergic reaction: Patient is allergic to {allergy.capitalize()} and active medication regimen contains {gen.capitalize()}.",
                         "drug_involved": gen.capitalize(),
                         "source": "Patient Allergy Record / Clinical Safety Rules"

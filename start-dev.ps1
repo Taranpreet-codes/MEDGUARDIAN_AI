@@ -56,7 +56,25 @@ if ($redisExe) {
     Write-Host "    > winget install Redis.Redis" -ForegroundColor White
 }
 
-# -- 2. Start Django backend -------------------------------------------------
+# -- 2. Determine Python & Frontend Executables -------------------------------
+
+$pythonExe = "python"
+$venvPython = "$PSScriptRoot\.venv\Scripts\python.exe"
+$backendVenvPython = "$backendDir\.venv\Scripts\python.exe"
+
+if (Test-Path $venvPython) {
+    $pythonExe = $venvPython
+    Write-Host "[OK] Using virtual environment Python: $venvPython" -ForegroundColor Green
+} elseif (Test-Path $backendVenvPython) {
+    $pythonExe = $backendVenvPython
+    Write-Host "[OK] Using backend virtual environment Python: $backendVenvPython" -ForegroundColor Green
+} else {
+    Write-Host "[i] Using global Python ($pythonExe)" -ForegroundColor Gray
+}
+
+$npmExe = if (Get-Command "npm.cmd" -ErrorAction SilentlyContinue) { "npm.cmd" } else { "npm" }
+
+# -- 3. Start Django backend -------------------------------------------------
 
 Write-Host ""
 Write-Host "[*] Starting Django backend on http://localhost:8000 ..." -ForegroundColor Cyan
@@ -68,34 +86,35 @@ if ($redisRunning) {
     $env:CELERY_TASK_ALWAYS_EAGER = "True"
 }
 
-$djangoProcess = Start-Process -FilePath "python" `
+$djangoProcess = Start-Process -FilePath $pythonExe `
     -ArgumentList "manage.py runserver" `
     -WorkingDirectory $backendDir `
     -PassThru -WindowStyle Normal
 
-# -- 3. Start Celery worker (only when Redis is available) -------------------
+# -- 4. Start Celery worker (only when Redis is available) -------------------
 
+$celeryProcess = $null
 if ($redisRunning) {
     Write-Host "[*] Starting Celery worker..." -ForegroundColor Cyan
     $env:REDIS_URL = "redis://localhost:6379/0"
-    Start-Process -FilePath "celery" `
-        -ArgumentList "-A medguardian worker --loglevel=info -P solo" `
+    $celeryProcess = Start-Process -FilePath $pythonExe `
+        -ArgumentList "-m celery -A medguardian worker --loglevel=info -P solo" `
         -WorkingDirectory $backendDir `
-        -WindowStyle Normal
+        -PassThru -WindowStyle Normal
 } else {
     Write-Host "[i] Celery worker skipped (EAGER mode - background tasks run inline)." -ForegroundColor Yellow
 }
 
-# -- 4. Start React frontend -------------------------------------------------
+# -- 5. Start React frontend -------------------------------------------------
 
 Write-Host ""
 Write-Host "[*] Starting React frontend on http://localhost:5173 ..." -ForegroundColor Cyan
-Start-Process -FilePath "npm" `
+$frontendProcess = Start-Process -FilePath $npmExe `
     -ArgumentList "run dev" `
     -WorkingDirectory "$PSScriptRoot\frontend" `
-    -WindowStyle Normal
+    -PassThru -WindowStyle Normal
 
-# -- 5. Summary --------------------------------------------------------------
+# -- 6. Summary --------------------------------------------------------------
 
 Write-Host ""
 Write-Host "======================================================" -ForegroundColor DarkGray
@@ -111,7 +130,22 @@ Write-Host "======================================================" -ForegroundC
 Write-Host ""
 Write-Host "Press Ctrl+C to stop all services." -ForegroundColor Gray
 
-# Keep script alive
-if ($djangoProcess -and $djangoProcess.Id) {
-    Wait-Process -Id $djangoProcess.Id -ErrorAction SilentlyContinue
+# Keep script alive and monitor processes
+try {
+    while ($true) {
+        if ($djangoProcess.HasExited) {
+            Write-Host "[!] Django process exited with code $($djangoProcess.ExitCode)." -ForegroundColor Red
+            break
+        }
+        if ($frontendProcess.HasExited) {
+            Write-Host "[!] Frontend process exited with code $($frontendProcess.ExitCode)." -ForegroundColor Red
+            break
+        }
+        Start-Sleep -Seconds 1
+    }
+} finally {
+    Write-Host "`nStopping MedGuardian services..." -ForegroundColor Yellow
+    if ($djangoProcess -and -not $djangoProcess.HasExited) { Stop-Process -Id $djangoProcess.Id -Force -ErrorAction SilentlyContinue }
+    if ($frontendProcess -and -not $frontendProcess.HasExited) { Stop-Process -Id $frontendProcess.Id -Force -ErrorAction SilentlyContinue }
+    if ($celeryProcess -and -not $celeryProcess.HasExited) { Stop-Process -Id $celeryProcess.Id -Force -ErrorAction SilentlyContinue }
 }
